@@ -1,0 +1,8 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:bottom="45dp"
+        android:drawable="@drawable/cat_money"
+        android:left="45dp"
+        android:right="45dp"
+        android:top="45dp" />
+</layer-list>
