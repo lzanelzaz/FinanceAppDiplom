@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "project.e_buyankina.auth"
+    namespace = "project.e_buyankina.main"
     compileSdk = 36
 
     defaultConfig {

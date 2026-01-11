@@ -1,4 +1,4 @@
-package project.e_buyankina.auth
+package project.e_buyankina.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,7 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import project.e_buyankina.financeapp.ui.theme.AppTheme
+import project.e_buyankina.common_ui.theme.AppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting(
                         name = "Android",
-                        modifier = padding(innerPadding)
+                        modifier = Modifier.padding(innerPadding)
                     )
                 }
             }
