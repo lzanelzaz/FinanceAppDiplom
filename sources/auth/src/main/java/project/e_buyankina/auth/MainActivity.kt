@@ -1,4 +1,4 @@
-package project.e_buyankina.financeapp
+package project.e_buyankina.auth
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting(
                         name = "Android",
-                        modifier = Modifier.padding(innerPadding)
+                        modifier = padding(innerPadding)
                     )
                 }
             }

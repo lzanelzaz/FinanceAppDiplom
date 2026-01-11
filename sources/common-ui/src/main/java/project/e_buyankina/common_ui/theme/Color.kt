@@ -1,4 +1,5 @@
-package project.e_buyankina.financeapp.ui.theme
+package project.e_buyankina.common_ui.theme
+
 import androidx.compose.ui.graphics.Color
 
 val primaryLight = Color(0xFF4C662B)

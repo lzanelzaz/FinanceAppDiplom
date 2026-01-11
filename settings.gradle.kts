@@ -22,3 +22,5 @@ dependencyResolutionManagement {
 rootProject.name = "Finance App"
 include(":app")
 include(":sources:splashscreen")
+include(":sources:auth")
+include(":sources:common-ui")
