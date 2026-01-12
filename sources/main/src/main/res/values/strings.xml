@@ -1,0 +1,5 @@
+<resources>
+    <string name="finances">Финансы</string>
+    <string name="analytics">Аналитика</string>
+    <string name="profile">Я</string>
+</resources>
