@@ -1,0 +1,11 @@
+<resources>
+    <string name="log_into_account">Войти в аккаунт</string>
+    <string name="registration">Регистрация</string>
+    <string name="email">Email</string>
+    <string name="password">Пароль</string>
+    <string name="name">Имя</string>
+    <string name="log_in">Войти</string>
+    <string name="me_new_user">Я новый пользователь</string>
+    <string name="register">Зарегистироваться</string>
+    <string name="already_has_account">У меня уже есть аккаунт</string>
+</resources>
