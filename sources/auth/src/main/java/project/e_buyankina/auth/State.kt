@@ -9,4 +9,6 @@ internal data class State(
     @param:StringRes val primaryButtonText: Int,
     @param:StringRes val secondaryButtonText: Int,
     @param:DrawableRes val passwordIcon: Int,
+    val isPrimaryButtonLoading: Boolean,
+    val isSecondaryButtonLoading: Boolean,
 )
