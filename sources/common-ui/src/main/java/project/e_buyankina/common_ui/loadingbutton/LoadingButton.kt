@@ -25,7 +25,7 @@ fun LoadingButton(
         enabled = !isLoading,
         modifier = modifier,
         colors = colors.copy(
-            disabledContainerColor = MaterialTheme.colorScheme.primary,
+            disabledContainerColor = colors.containerColor,
         ),
     ) {
         if (isLoading) {
