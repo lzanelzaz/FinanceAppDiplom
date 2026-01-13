@@ -50,8 +50,18 @@ internal class AuthViewModel() : ViewModel() {
     }
 
     fun onPrimaryButtonClick() {
-        state.update {
-            it.copy(isLoading = true)
+        val validInput = with(state.value) {
+            emailRegex.matches(emailText) &&
+                    passwordRegex.matches(passwordText) &&
+                    (isHasAccount || nameText.isNotBlank())
+        }
+        if (validInput) {
+            state.update {
+                it.copy(isLoading = true)
+            }
+
+        } else {
+
         }
     }
 
@@ -87,5 +97,8 @@ internal class AuthViewModel() : ViewModel() {
     private companion object {
 
         const val MASK_CHAR = "*"
+
+        val emailRegex = "^[\\\\w.%+-]+@[\\\\w.-]+\\\\.[A-Za-z]{2,}$".toRegex()
+        val passwordRegex = "^(?=.*\\d).{5,}$".toRegex()
     }
 }
