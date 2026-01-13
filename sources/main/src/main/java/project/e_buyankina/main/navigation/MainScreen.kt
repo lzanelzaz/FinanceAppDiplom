@@ -1,4 +1,4 @@
-package project.e_buyankina.main
+package project.e_buyankina.main.navigation
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon

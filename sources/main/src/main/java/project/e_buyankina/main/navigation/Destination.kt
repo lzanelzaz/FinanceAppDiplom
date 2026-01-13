@@ -1,7 +1,8 @@
-package project.e_buyankina.main
+package project.e_buyankina.main.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import project.e_buyankina.main.R
 
 internal enum class Destination(
     val route: String,

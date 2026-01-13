@@ -1,4 +1,4 @@
-package project.e_buyankina.profile
+package project.e_buyankina.main.profile
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import project.e_buyankina.common_ui.loadingbutton.LoadingButton
 import project.e_buyankina.common_ui.preview.DayNightPreviews
 import project.e_buyankina.common_ui.theme.AppTheme
+import project.e_buyankina.main.R
 
 @Composable
 internal fun ProfileScreen(state: State) {
