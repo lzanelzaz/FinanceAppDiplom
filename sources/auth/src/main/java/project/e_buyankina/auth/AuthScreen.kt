@@ -2,21 +2,25 @@ package project.e_buyankina.auth
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -26,19 +30,60 @@ import project.e_buyankina.common_ui.preview.DayNightPreviews
 import project.e_buyankina.common_ui.theme.AppTheme
 
 @Composable
-internal fun AuthScreen(state: State) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        HeaderBlock(state)
-        TextFieldsBlock(state)
-    }
-    ButtonsBlock(state)
+fun AuthScreen() {
+    val viewModel = remember { AuthViewModel() }
+    val state = viewModel.uiState.collectAsState()
+    AuthScreenContent(
+        state = state.value,
+        onPasswordIconClick = { viewModel.onPasswordIconClick() },
+        onPrimaryButtonClick = { viewModel.onPrimaryButtonClick() },
+        onSecondaryButtonClick = { viewModel.onSecondaryButtonClick() },
+        onEmailTextUpdated = { viewModel.onEmailTextUpdated(it) },
+        onPasswordTextUpdated = { viewModel.onPasswordTextUpdated(it) },
+        onNameTextUpdated = { viewModel.onNameTextUpdated(it) },
+    )
 }
 
 @Composable
-private fun HeaderBlock(state: State) {
+internal fun AuthScreenContent(
+    state: UiState,
+    onEmailTextUpdated: (String) -> Unit,
+    onPasswordTextUpdated: (String) -> Unit,
+    onNameTextUpdated: (String) -> Unit,
+    onPasswordIconClick: () -> Unit,
+    onPrimaryButtonClick: () -> Unit,
+    onSecondaryButtonClick: () -> Unit,
+) {
+    val focusManager = LocalFocusManager.current
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable(
+                interactionSource = MutableInteractionSource(),
+                indication = null,
+            ) {
+                focusManager.clearFocus()
+            },
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        HeaderBlock(state)
+        TextFieldsBlock(
+            state = state,
+            onEmailTextUpdated = onEmailTextUpdated,
+            onPasswordTextUpdated = onPasswordTextUpdated,
+            onNameTextUpdated = onNameTextUpdated,
+            onPasswordIconClick = onPasswordIconClick,
+        )
+    }
+    ButtonsBlock(
+        state = state,
+        onPrimaryButtonClick = onPrimaryButtonClick,
+        onSecondaryButtonClick = onSecondaryButtonClick,
+    )
+}
+
+@Composable
+private fun HeaderBlock(state: UiState) {
     Image(
         painter = painterResource(R.drawable.cat_group),
         contentDescription = null,
@@ -56,10 +101,18 @@ private fun HeaderBlock(state: State) {
 }
 
 @Composable
-private fun TextFieldsBlock(state: State) {
+private fun TextFieldsBlock(
+    state: UiState,
+    onEmailTextUpdated: (String) -> Unit,
+    onPasswordTextUpdated: (String) -> Unit,
+    onNameTextUpdated: (String) -> Unit,
+    onPasswordIconClick: () -> Unit,
+) {
     OutlinedTextField(
+        value = state.emailText,
+        onValueChange = onEmailTextUpdated,
+        enabled = !state.isLoading,
         modifier = Modifier.padding(vertical = 10.dp),
-        state = TextFieldState(),
         label = {
             Text(
                 text = stringResource(R.string.email)
@@ -67,8 +120,10 @@ private fun TextFieldsBlock(state: State) {
         }
     )
     OutlinedTextField(
+        value = state.passwordText,
+        onValueChange = onPasswordTextUpdated,
+        enabled = !state.isLoading,
         modifier = Modifier.padding(vertical = 10.dp),
-        state = TextFieldState(),
         label = {
             Text(
                 text = stringResource(R.string.password)
@@ -78,14 +133,16 @@ private fun TextFieldsBlock(state: State) {
             Icon(
                 painter = painterResource(state.passwordIcon),
                 contentDescription = null,
-                modifier = Modifier.clickable(onClick = {}),
+                modifier = Modifier.clickable(onClick = onPasswordIconClick),
             )
         }
     )
     if (state.isNameFieldVisible) {
         OutlinedTextField(
+            value = state.nameText,
+            onValueChange = onNameTextUpdated,
+            enabled = !state.isLoading,
             modifier = Modifier.padding(vertical = 10.dp),
-            state = TextFieldState(),
             label = {
                 Text(
                     text = stringResource(R.string.name)
@@ -96,18 +153,22 @@ private fun TextFieldsBlock(state: State) {
 }
 
 @Composable
-private fun ButtonsBlock(state: State) {
+private fun ButtonsBlock(
+    state: UiState,
+    onPrimaryButtonClick: () -> Unit,
+    onSecondaryButtonClick: () -> Unit,
+) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         LoadingButton(
-            onClick = {},
+            onClick = onPrimaryButtonClick,
             modifier = Modifier
                 .padding(top = 72.dp, bottom = 20.dp)
                 .size(width = 230.dp, height = 56.dp),
-            isLoading = state.isPrimaryButtonLoading,
+            isLoading = state.isLoading,
             content = {
                 Text(
                     text = stringResource(state.primaryButtonText),
@@ -115,14 +176,16 @@ private fun ButtonsBlock(state: State) {
                 )
             }
         )
-        LoadingButton(
-            onClick = {},
+        Button(
+            onClick = onSecondaryButtonClick,
+            enabled = !state.isLoading,
             modifier = Modifier
                 .padding(top = 20.dp, bottom = 80.dp)
                 .height(56.dp),
-            isLoading = state.isSecondaryButtonLoading,
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surface),
-            loadingColor = MaterialTheme.colorScheme.onSurface,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+                disabledContainerColor = MaterialTheme.colorScheme.surface,
+            ),
             content = {
                 Text(
                     text = stringResource(state.secondaryButtonText),
@@ -138,50 +201,80 @@ private fun ButtonsBlock(state: State) {
 @DayNightPreviews
 @Composable
 private fun PreviewRegister() {
-    val state = State(
+    val state = UiState(
         title = R.string.log_into_account,
         isNameFieldVisible = true,
         primaryButtonText = R.string.log_in,
         secondaryButtonText = R.string.me_new_user,
         passwordIcon = R.drawable.visibility_lock_24dp,
-        isPrimaryButtonLoading = false,
-        isSecondaryButtonLoading = false,
+        isLoading = false,
+        emailText = "",
+        passwordText = "",
+        nameText = "",
     )
     AppTheme {
-        AuthScreen(state = state)
+        AuthScreenContent(
+            state = state,
+            onPasswordIconClick = {},
+            onPrimaryButtonClick = {},
+            onSecondaryButtonClick = {},
+            onEmailTextUpdated = {},
+            onPasswordTextUpdated = {},
+            onNameTextUpdated = {},
+        )
     }
 }
 
 @DayNightPreviews
 @Composable
 private fun PreviewAuth() {
-    val state = State(
+    val state = UiState(
         title = R.string.log_into_account,
         isNameFieldVisible = false,
         primaryButtonText = R.string.log_in,
         secondaryButtonText = R.string.me_new_user,
         passwordIcon = R.drawable.visibility_lock_24dp,
-        isPrimaryButtonLoading = false,
-        isSecondaryButtonLoading = false,
+        isLoading = false,
+        emailText = "",
+        passwordText = "",
+        nameText = "",
     )
     AppTheme {
-        AuthScreen(state = state)
+        AuthScreenContent(
+            state = state,
+            onPasswordIconClick = {},
+            onPrimaryButtonClick = {},
+            onSecondaryButtonClick = {},
+            onEmailTextUpdated = {},
+            onPasswordTextUpdated = {},
+            onNameTextUpdated = {},
+        )
     }
 }
 
 @DayNightPreviews
 @Composable
 private fun PreviewLoading() {
-    val state = State(
+    val state = UiState(
         title = R.string.log_into_account,
         isNameFieldVisible = true,
         primaryButtonText = R.string.log_in,
         secondaryButtonText = R.string.me_new_user,
         passwordIcon = R.drawable.visibility_lock_24dp,
-        isPrimaryButtonLoading = true,
-        isSecondaryButtonLoading = true,
+        isLoading = true,
+        emailText = "",
+        passwordText = "",
+        nameText = "",
     )
     AppTheme {
-        AuthScreen(state = state)
+        AuthScreenContent(
+            state = state,
+            onPasswordIconClick = {},
+            onPrimaryButtonClick = {},
+            onSecondaryButtonClick = {},
+            onEmailTextUpdated = {},
+            onPasswordTextUpdated = {},
+            onNameTextUpdated = {},
+        )
     }
 }

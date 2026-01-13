@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -48,6 +49,9 @@ dependencies {
     implementation(libs.androidx.material3)
 
     implementation(libs.splashscreen)
+
+    implementation(project(":sources:auth"))
+    implementation(project(":sources:common-ui"))
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)

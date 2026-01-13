@@ -22,8 +22,11 @@ fun LoadingButton(
 ) {
     Button(
         onClick = onClick,
+        enabled = !isLoading,
         modifier = modifier,
-        colors = colors,
+        colors = colors.copy(
+            disabledContainerColor = MaterialTheme.colorScheme.primary,
+        ),
     ) {
         if (isLoading) {
             CircularProgressIndicator(
