@@ -59,7 +59,7 @@ internal fun AuthScreenContent(
         modifier = Modifier
             .fillMaxSize()
             .clickable(
-                interactionSource = MutableInteractionSource(),
+                interactionSource = remember { MutableInteractionSource() },
                 indication = null,
             ) {
                 focusManager.clearFocus()
