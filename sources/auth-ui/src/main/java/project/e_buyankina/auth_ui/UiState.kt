@@ -1,4 +1,4 @@
-package project.e_buyankina.auth.ui
+package project.e_buyankina.auth_ui
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
