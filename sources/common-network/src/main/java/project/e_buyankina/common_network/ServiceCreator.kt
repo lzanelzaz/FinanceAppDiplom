@@ -10,7 +10,7 @@ object ServiceCreator {
     private val contentType = "application/json".toMediaType()
 
     private val retrofit: Retrofit = Retrofit.Builder()
-        .baseUrl("https://api.github.com/")
+        .baseUrl("https://ebuyankina/api/")
         .addConverterFactory(Json.asConverterFactory(contentType))
         .build()
 
