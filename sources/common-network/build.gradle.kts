@@ -8,7 +8,7 @@ plugins {
 }
 
 android {
-    namespace = "project.e_buyankina.common-network"
+    namespace = "project.e_buyankina.common_network"
     compileSdk = 36
 
     defaultConfig {

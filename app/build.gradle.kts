@@ -54,6 +54,8 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
+    implementation(libs.koin)
+
     implementation(project(":sources:splashscreen"))
     implementation(project(":sources:auth-ui"))
     implementation(project(":sources:common-ui"))
