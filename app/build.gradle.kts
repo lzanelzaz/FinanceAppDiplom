@@ -55,7 +55,7 @@ dependencies {
     implementation(libs.androidx.material3)
 
     implementation(project(":sources:splashscreen"))
-    implementation(project(":sources:auth"))
+    implementation(project(":sources:auth-ui"))
     implementation(project(":sources:common-ui"))
 
     debugImplementation(libs.androidx.ui.tooling)

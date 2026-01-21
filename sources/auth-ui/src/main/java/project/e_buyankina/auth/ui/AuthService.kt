@@ -1,4 +1,4 @@
-package project.e_buyankina.auth
+package project.e_buyankina.auth.ui
 
 import retrofit2.http.GET
 import retrofit2.http.POST

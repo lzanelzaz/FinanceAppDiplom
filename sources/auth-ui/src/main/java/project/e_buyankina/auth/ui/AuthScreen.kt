@@ -1,4 +1,4 @@
-package project.e_buyankina.auth
+package project.e_buyankina.auth.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -25,6 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import project.e_buyankina.auth_ui.R
 import project.e_buyankina.common_ui.loadingbutton.LoadingButton
 import project.e_buyankina.common_ui.preview.DayNightPreviews
 import project.e_buyankina.common_ui.theme.AppTheme

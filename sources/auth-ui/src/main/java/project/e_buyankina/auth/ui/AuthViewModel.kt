@@ -1,4 +1,4 @@
-package project.e_buyankina.auth
+package project.e_buyankina.auth.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import project.e_buyankina.auth_ui.R
 
 internal class AuthViewModel() : ViewModel() {
 

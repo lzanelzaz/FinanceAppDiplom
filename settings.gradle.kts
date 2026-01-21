@@ -22,7 +22,7 @@ dependencyResolutionManagement {
 rootProject.name = "Finance App"
 include(":app")
 include(":sources:splashscreen")
-include(":sources:auth")
+include(":sources:auth-ui")
 include(":sources:common-ui")
 include(":sources:main")
 include(":sources:common-network")

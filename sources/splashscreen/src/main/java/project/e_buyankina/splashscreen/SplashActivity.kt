@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import project.e_buyankina.auth.AuthScreen
+import project.e_buyankina.auth.ui.AuthScreen
 import project.e_buyankina.common_ui.theme.AppTheme
 
 class SplashActivity : ComponentActivity() {
