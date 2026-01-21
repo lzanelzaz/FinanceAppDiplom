@@ -50,4 +50,8 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.kotlinx.serialization)
     implementation(libs.koin)
+
+    implementation(project(":sources:common-network"))
+
+    testImplementation(libs.koin.test)
 }

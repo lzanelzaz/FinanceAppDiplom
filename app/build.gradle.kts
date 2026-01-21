@@ -57,6 +57,7 @@ dependencies {
     implementation(libs.koin)
 
     implementation(project(":sources:splashscreen"))
+    implementation(project(":sources:auth-api"))
     implementation(project(":sources:auth-ui"))
     implementation(project(":sources:common-ui"))
 

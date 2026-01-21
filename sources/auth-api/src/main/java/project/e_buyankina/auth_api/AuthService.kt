@@ -1,4 +1,4 @@
-package project.e_buyankina.auth_ui
+package project.e_buyankina.auth_api
 
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -22,5 +22,5 @@ internal interface AuthService {
     @GET("profile")
     fun profileInfo(
         @Query("account_id") accountId: String,
-    )
+    ): ProfileInfoApi
 }
