@@ -1,4 +1,4 @@
-package project.e_buyankina.auth_api
+package project.e_buyankina.auth_api.data
 
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -11,13 +11,13 @@ internal interface AuthService {
         @Query("login") login: String,
         @Query("password_hash") password: String,
         @Query("username") username: String,
-    )
+    ): AuthorizeInfoApi
 
     @POST("authorize")
     fun authorize(
         @Query("login") login: String,
         @Query("password_hash") password: String,
-    )
+    ): AuthorizeInfoApi
 
     @GET("profile")
     fun profileInfo(
