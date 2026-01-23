@@ -53,4 +53,5 @@ dependencies {
     implementation(project(":sources:common-ui"))
 
     implementation(project(":sources:auth-api"))
+    implementation(libs.koin)
 }

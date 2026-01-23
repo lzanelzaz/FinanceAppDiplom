@@ -56,6 +56,7 @@ dependencies {
 
     implementation(libs.koin)
 
+    implementation(project(":sources:app-database"))
     implementation(project(":sources:splashscreen"))
     implementation(project(":sources:auth-api"))
     implementation(project(":sources:auth-ui"))
@@ -63,4 +64,6 @@ dependencies {
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    testImplementation(libs.koin.test)
 }

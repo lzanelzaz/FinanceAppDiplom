@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "project.e_buyankina.common_db"
+    namespace = "project.e_buyankina.app_database"
     compileSdk = 36
 
     defaultConfig {
@@ -39,6 +39,8 @@ android {
 
 dependencies {
     implementation(libs.koin)
+
+    implementation(project(":sources:auth-api"))
 
     implementation(libs.room.runtime)
     ksp(libs.room.compiler)

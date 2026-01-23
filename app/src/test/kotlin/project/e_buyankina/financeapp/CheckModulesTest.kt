@@ -1,4 +1,4 @@
-package project.e_buyankina.auth_api.di
+package project.e_buyankina.financeapp
 
 import org.junit.Test
 import org.koin.core.annotation.KoinExperimentalAPI
@@ -10,6 +10,6 @@ internal class CheckModulesTest : KoinTest {
 
     @Test
     fun checkAllModules() {
-        authApiModule.verify()
+        koinModules.verify()
     }
 }

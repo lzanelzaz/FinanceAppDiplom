@@ -56,6 +56,4 @@ dependencies {
     ksp(libs.room.compiler)
 
     implementation(project(":sources:common-network"))
-
-    testImplementation(libs.koin.test)
 }
