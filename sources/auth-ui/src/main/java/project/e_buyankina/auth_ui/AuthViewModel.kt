@@ -25,27 +25,30 @@ internal class AuthViewModel(
     private fun initState() = State(
         isHasAccount = true,
         emailText = "",
+        isEmailError = false,
         passwordText = "",
+        isPasswordError = false,
         isPasswordMasked = false,
         nameText = "",
+        isNameError = false,
         isLoading = false,
     )
 
     fun onEmailTextUpdated(text: String) {
         state.update {
-            it.copy(emailText = text)
+            it.copy(emailText = text, isEmailError = false)
         }
     }
 
     fun onPasswordTextUpdated(text: String) {
         state.update {
-            it.copy(passwordText = text)
+            it.copy(passwordText = text, isPasswordError = false)
         }
     }
 
     fun onNameTextUpdated(text: String) {
         state.update {
-            it.copy(nameText = text)
+            it.copy(nameText = text, isNameError = false)
         }
     }
 
@@ -55,27 +58,35 @@ internal class AuthViewModel(
         }
     }
 
-    fun onPrimaryButtonClick() {
-        val validInput = with(state.value) {
-            emailRegex.matches(emailText) &&
-                    passwordRegex.matches(passwordText) &&
-                    (isHasAccount || nameText.isNotBlank())
+    fun onPrimaryButtonClick() = with(state.value) {
+        val validEmail = emailRegex.matches(emailText)
+        val validPassword = passwordRegex.matches(passwordText)
+        val validName = isHasAccount || nameText.isNotBlank()
+        val validInput = validEmail && validPassword && validName
+        if (!validInput) {
+            state.update {
+                it.copy(
+                    isEmailError = !validEmail,
+                    isPasswordError = !validPassword,
+                    isNameError = !validName,
+                )
+            }
+            return@with
         }
-        if (!validInput) return
         state.update {
             it.copy(isLoading = true)
         }
         viewModelScope.launch {
-            if (state.value.isHasAccount) {
+            if (isHasAccount) {
                 authorizeUseCase(
-                    login = state.value.emailText,
-                    password = state.value.passwordText,
+                    login = emailText,
+                    password = passwordText,
                 )
             } else {
                 createUserUseCase(
-                    login = state.value.emailText,
-                    password = state.value.passwordText,
-                    username = state.value.nameText,
+                    login = emailText,
+                    password = passwordText,
+                    username = nameText,
                 )
             }
         }
@@ -91,8 +102,11 @@ internal class AuthViewModel(
         UiState(
             title = if (isHasAccount) R.string.log_into_account else R.string.registration,
             emailText = emailText,
+            emailErrorTextRes = R.string.email_error.takeIf { isEmailError },
             passwordText = if (isPasswordMasked) MASK_CHAR.repeat(passwordText.length) else passwordText,
+            passwordErrorTextRes = R.string.password_error.takeIf { isPasswordError },
             nameText = nameText,
+            nameErrorTextRes = R.string.name_error.takeIf { isNameError },
             isNameFieldVisible = !isHasAccount,
             primaryButtonText = if (isHasAccount) R.string.log_in else R.string.registration,
             secondaryButtonText = if (isHasAccount) R.string.me_new_user else R.string.already_has_account,
@@ -104,9 +118,12 @@ internal class AuthViewModel(
     private data class State(
         val isHasAccount: Boolean,
         val emailText: String,
+        val isEmailError: Boolean,
         val passwordText: String,
+        val isPasswordError: Boolean,
         val isPasswordMasked: Boolean,
         val nameText: String,
+        val isNameError: Boolean,
         val isLoading: Boolean,
     )
 
@@ -114,7 +131,7 @@ internal class AuthViewModel(
 
         const val MASK_CHAR = "*"
 
-        val emailRegex = "^[\\\\w.%+-]+@[\\\\w.-]+\\\\.[A-Za-z]{2,}$".toRegex()
+        val emailRegex = "^[\\w.%+-]+@[\\w.-]+\\.[A-Za-z]{2,}$".toRegex()
         val passwordRegex = "^(?=.*\\d).{5,}$".toRegex()
     }
 }

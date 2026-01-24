@@ -4,11 +4,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -56,31 +59,38 @@ internal fun AuthScreenContent(
     onSecondaryButtonClick: () -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
-    Column(
+    Box(
         modifier = Modifier
+            .navigationBarsPadding()
+            .statusBarsPadding()
             .fillMaxSize()
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-            ) {
-                focusManager.clearFocus()
-            },
-        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        HeaderBlock(state)
-        TextFieldsBlock(
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                ) {
+                    focusManager.clearFocus()
+                },
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            HeaderBlock(state)
+            TextFieldsBlock(
+                state = state,
+                onEmailTextUpdated = onEmailTextUpdated,
+                onPasswordTextUpdated = onPasswordTextUpdated,
+                onNameTextUpdated = onNameTextUpdated,
+                onPasswordIconClick = onPasswordIconClick,
+            )
+        }
+        ButtonsBlock(
             state = state,
-            onEmailTextUpdated = onEmailTextUpdated,
-            onPasswordTextUpdated = onPasswordTextUpdated,
-            onNameTextUpdated = onNameTextUpdated,
-            onPasswordIconClick = onPasswordIconClick,
+            onPrimaryButtonClick = onPrimaryButtonClick,
+            onSecondaryButtonClick = onSecondaryButtonClick,
         )
     }
-    ButtonsBlock(
-        state = state,
-        onPrimaryButtonClick = onPrimaryButtonClick,
-        onSecondaryButtonClick = onSecondaryButtonClick,
-    )
 }
 
 @Composable
@@ -88,13 +98,11 @@ private fun HeaderBlock(state: UiState) {
     Image(
         painter = painterResource(R.drawable.cat_group),
         contentDescription = null,
-        modifier = Modifier
-            .size(256.dp)
-            .padding(top = 32.dp)
+        modifier = Modifier.size(180.dp)
     )
     Text(
         text = stringResource(state.title),
-        modifier = Modifier.padding(vertical = 16.dp),
+        modifier = Modifier.padding(vertical = 8.dp),
         style = MaterialTheme.typography.headlineMedium,
         color = MaterialTheme.colorScheme.onSurface,
         fontWeight = FontWeight.Bold,
@@ -113,18 +121,26 @@ private fun TextFieldsBlock(
         value = state.emailText,
         onValueChange = onEmailTextUpdated,
         enabled = !state.isLoading,
-        modifier = Modifier.padding(vertical = 10.dp),
+        modifier = Modifier.padding(vertical = 5.dp),
         label = {
             Text(
                 text = stringResource(R.string.email)
             )
-        }
+        },
+        isError = state.emailErrorTextRes != null,
+        supportingText = {
+            if (state.emailErrorTextRes != null) {
+                Text(
+                    text = stringResource(state.emailErrorTextRes)
+                )
+            }
+        },
     )
     OutlinedTextField(
         value = state.passwordText,
         onValueChange = onPasswordTextUpdated,
         enabled = !state.isLoading,
-        modifier = Modifier.padding(vertical = 10.dp),
+        modifier = Modifier.padding(vertical = 5.dp),
         label = {
             Text(
                 text = stringResource(R.string.password)
@@ -136,19 +152,35 @@ private fun TextFieldsBlock(
                 contentDescription = null,
                 modifier = Modifier.clickable(onClick = onPasswordIconClick),
             )
-        }
+        },
+        isError = state.passwordErrorTextRes != null,
+        supportingText = {
+            if (state.passwordErrorTextRes != null) {
+                Text(
+                    text = stringResource(state.passwordErrorTextRes)
+                )
+            }
+        },
     )
     if (state.isNameFieldVisible) {
         OutlinedTextField(
             value = state.nameText,
             onValueChange = onNameTextUpdated,
             enabled = !state.isLoading,
-            modifier = Modifier.padding(vertical = 10.dp),
+            modifier = Modifier.padding(vertical = 5.dp),
             label = {
                 Text(
                     text = stringResource(R.string.name)
                 )
-            }
+            },
+            isError = state.nameErrorTextRes != null,
+            supportingText = {
+                if (state.nameErrorTextRes != null) {
+                    Text(
+                        text = stringResource(state.nameErrorTextRes)
+                    )
+                }
+            },
         )
     }
 }
@@ -167,7 +199,6 @@ private fun ButtonsBlock(
         LoadingButton(
             onClick = onPrimaryButtonClick,
             modifier = Modifier
-                .padding(top = 72.dp, bottom = 20.dp)
                 .size(width = 230.dp, height = 56.dp),
             isLoading = state.isLoading,
             content = {
@@ -181,7 +212,7 @@ private fun ButtonsBlock(
             onClick = onSecondaryButtonClick,
             enabled = !state.isLoading,
             modifier = Modifier
-                .padding(top = 20.dp, bottom = 80.dp)
+                .padding(top = 12.dp, bottom = 12.dp)
                 .height(56.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.surface,
@@ -210,8 +241,11 @@ private fun PreviewRegister() {
         passwordIcon = R.drawable.visibility_lock_24dp,
         isLoading = false,
         emailText = "",
+        emailErrorTextRes = null,
         passwordText = "",
+        passwordErrorTextRes = null,
         nameText = "",
+        nameErrorTextRes = null,
     )
     AppTheme {
         AuthScreenContent(
@@ -229,17 +263,7 @@ private fun PreviewRegister() {
 @DayNightPreviews
 @Composable
 private fun PreviewAuth() {
-    val state = UiState(
-        title = R.string.log_into_account,
-        isNameFieldVisible = false,
-        primaryButtonText = R.string.log_in,
-        secondaryButtonText = R.string.me_new_user,
-        passwordIcon = R.drawable.visibility_lock_24dp,
-        isLoading = false,
-        emailText = "",
-        passwordText = "",
-        nameText = "",
-    )
+    val state = previewEmptyState()
     AppTheme {
         AuthScreenContent(
             state = state,
@@ -256,16 +280,8 @@ private fun PreviewAuth() {
 @DayNightPreviews
 @Composable
 private fun PreviewLoading() {
-    val state = UiState(
-        title = R.string.log_into_account,
-        isNameFieldVisible = true,
-        primaryButtonText = R.string.log_in,
-        secondaryButtonText = R.string.me_new_user,
-        passwordIcon = R.drawable.visibility_lock_24dp,
+    val state = previewEmptyState().copy(
         isLoading = true,
-        emailText = "",
-        passwordText = "",
-        nameText = "",
     )
     AppTheme {
         AuthScreenContent(
@@ -279,3 +295,39 @@ private fun PreviewLoading() {
         )
     }
 }
+
+@DayNightPreviews
+@Composable
+private fun PreviewErrors() {
+    val state = previewEmptyState().copy(
+        emailErrorTextRes = R.string.email_error,
+        passwordErrorTextRes = R.string.password_error,
+        nameErrorTextRes = R.string.name_error,
+    )
+    AppTheme {
+        AuthScreenContent(
+            state = state,
+            onPasswordIconClick = {},
+            onPrimaryButtonClick = {},
+            onSecondaryButtonClick = {},
+            onEmailTextUpdated = {},
+            onPasswordTextUpdated = {},
+            onNameTextUpdated = {},
+        )
+    }
+}
+
+private fun previewEmptyState() = UiState(
+    title = R.string.log_into_account,
+    isNameFieldVisible = true,
+    primaryButtonText = R.string.log_in,
+    secondaryButtonText = R.string.me_new_user,
+    passwordIcon = R.drawable.visibility_lock_24dp,
+    isLoading = false,
+    emailText = "",
+    emailErrorTextRes = null,
+    passwordText = "",
+    passwordErrorTextRes = null,
+    nameText = "",
+    nameErrorTextRes = null,
+)
