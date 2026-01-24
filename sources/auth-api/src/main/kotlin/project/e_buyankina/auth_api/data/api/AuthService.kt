@@ -7,20 +7,20 @@ import retrofit2.http.Query
 internal interface AuthService {
 
     @POST("create_user")
-    fun createUser(
+    suspend fun createUser(
         @Query("login") login: String,
         @Query("password_hash") password: String,
         @Query("username") username: String,
     ): AuthorizeInfoApi
 
     @POST("authorize")
-    fun authorize(
+    suspend fun authorize(
         @Query("login") login: String,
         @Query("password_hash") password: String,
     ): AuthorizeInfoApi
 
     @GET("profile")
-    fun profileInfo(
+    suspend fun profileInfo(
         @Query("account_id") accountId: String,
     ): ProfileInfoApi
 }

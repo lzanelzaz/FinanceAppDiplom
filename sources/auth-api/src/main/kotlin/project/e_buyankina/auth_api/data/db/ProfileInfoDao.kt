@@ -9,11 +9,11 @@ import androidx.room.Query
 interface ProfileInfoDao {
 
     @Query("SELECT * FROM ProfileInfoDb LIMIT 1")
-    fun getCurrentUser(): ProfileInfoDb?
+    suspend fun getCurrentUser(): ProfileInfoDb?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(profile: ProfileInfoDb)
+    suspend fun insert(profile: ProfileInfoDb)
 
     @Query("DELETE FROM ProfileInfoDb")
-    fun delete()
+    suspend fun delete()
 }

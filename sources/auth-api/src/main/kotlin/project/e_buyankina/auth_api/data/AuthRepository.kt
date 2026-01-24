@@ -8,24 +8,20 @@ import project.e_buyankina.auth_api.domain.ProfileInfo
 
 internal interface AuthRepository {
 
-    fun createUser(
+    suspend fun createUser(
         login: String,
         password: String,
         username: String,
     ): ProfileInfo
 
-    fun authorize(
+    suspend fun authorize(
         login: String,
         password: String,
     ): ProfileInfo
 
-    fun profileInfo(
-        accountId: String,
-    ): ProfileInfo
+    suspend fun currentUser(): ProfileInfo?
 
-    fun currentUser(): ProfileInfo?
-
-    fun logOut()
+    suspend fun logOut()
 }
 
 internal class AuthRepositoryImpl(
@@ -35,39 +31,33 @@ internal class AuthRepositoryImpl(
     private val profileInfoDbToDomainMapper: ProfileInfoDbToDomainMapper,
 ) : AuthRepository {
 
-    override fun createUser(
+    override suspend fun createUser(
         login: String,
         password: String,
         username: String
     ): ProfileInfo {
         val accountId = service.createUser(login, password, username).accountId
-        val api = service.profileInfo(accountId)
-        val db = profileInfoApiToDbMapper(accountId, api)
-        dao.insert(db)
-        return profileInfoDbToDomainMapper(db)
+        return getProfileInfo(accountId)
     }
 
-    override fun authorize(login: String, password: String): ProfileInfo {
+    override suspend fun authorize(login: String, password: String): ProfileInfo {
         val accountId = service.authorize(login, password).accountId
-        val api = service.profileInfo(accountId)
-        val db = profileInfoApiToDbMapper(accountId, api)
-        dao.insert(db)
-        return profileInfoDbToDomainMapper(db)
+        return getProfileInfo(accountId)
     }
 
-    override fun profileInfo(accountId: String): ProfileInfo {
-        val api = service.profileInfo(accountId)
-        val db = profileInfoApiToDbMapper(accountId, api)
-        dao.insert(db)
-        return profileInfoDbToDomainMapper(db)
-    }
-
-    override fun currentUser(): ProfileInfo? {
+    override suspend fun currentUser(): ProfileInfo? {
         val db = dao.getCurrentUser()
         return db?.let { profileInfoDbToDomainMapper(it) }
     }
 
-    override fun logOut() {
+    override suspend fun logOut() {
         dao.delete()
+    }
+
+    private suspend fun getProfileInfo(accountId: String): ProfileInfo {
+        val api = service.profileInfo(accountId)
+        val db = profileInfoApiToDbMapper(accountId, api)
+        dao.insert(db)
+        return profileInfoDbToDomainMapper(db)
     }
 }
