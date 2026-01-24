@@ -25,13 +25,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import org.koin.compose.viewmodel.koinViewModel
 import project.e_buyankina.common_ui.loadingbutton.LoadingButton
 import project.e_buyankina.common_ui.preview.DayNightPreviews
 import project.e_buyankina.common_ui.theme.AppTheme
 
 @Composable
 fun AuthScreen() {
-    val viewModel = remember { AuthViewModel() }
+    val viewModel = koinViewModel<AuthViewModel>()
     val state = viewModel.uiState.collectAsState()
     AuthScreenContent(
         state = state.value,

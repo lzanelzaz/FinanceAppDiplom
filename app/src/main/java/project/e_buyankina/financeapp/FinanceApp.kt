@@ -7,6 +7,7 @@ import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import project.e_buyankina.app_database.appDatabaseModule
 import project.e_buyankina.auth_api.di.authApiModule
+import project.e_buyankina.auth_ui.di.authUiModule
 
 class FinanceApp : Application() {
 
@@ -25,5 +26,6 @@ val koinModules = module {
     includes(
         appDatabaseModule,
         authApiModule,
+        authUiModule,
     )
 }

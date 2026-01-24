@@ -8,8 +8,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import project.e_buyankina.auth_api.domain.usecases.AuthorizeUseCase
+import project.e_buyankina.auth_api.domain.usecases.CreateUserUseCase
 
-internal class AuthViewModel() : ViewModel() {
+internal class AuthViewModel(
+    private val createUserUseCase: CreateUserUseCase,
+    private val authorizeUseCase: AuthorizeUseCase,
+) : ViewModel() {
 
     private val state = MutableStateFlow(initState())
     val uiState: StateFlow<UiState> = state
@@ -55,13 +61,23 @@ internal class AuthViewModel() : ViewModel() {
                     passwordRegex.matches(passwordText) &&
                     (isHasAccount || nameText.isNotBlank())
         }
-        if (validInput) {
-            state.update {
-                it.copy(isLoading = true)
+        if (!validInput) return
+        state.update {
+            it.copy(isLoading = true)
+        }
+        viewModelScope.launch {
+            if (state.value.isHasAccount) {
+                authorizeUseCase(
+                    login = state.value.emailText,
+                    password = state.value.passwordText,
+                )
+            } else {
+                createUserUseCase(
+                    login = state.value.emailText,
+                    password = state.value.passwordText,
+                    username = state.value.nameText,
+                )
             }
-
-        } else {
-
         }
     }
 

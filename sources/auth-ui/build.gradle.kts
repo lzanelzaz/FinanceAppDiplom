@@ -54,4 +54,5 @@ dependencies {
 
     implementation(project(":sources:auth-api"))
     implementation(libs.koin)
+    implementation(libs.koin.compose)
 }
