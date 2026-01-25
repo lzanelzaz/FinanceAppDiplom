@@ -64,7 +64,6 @@ dependencies {
     implementation(project(":sources:app-database"))
     implementation(project(":sources:auth-api"))
     implementation(project(":sources:auth-ui"))
-    implementation(project(":sources:main"))
     implementation(project(":sources:common-ui"))
     implementation(project(":sources:splashscreen"))
     implementation(project(":sources:common-navigation"))

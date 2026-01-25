@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import project.e_buyankina.auth_api.domain.usecases.GetCurrentUserUseCase
 import project.e_buyankina.auth_api.domain.usecases.LogOutUseCase
 import project.e_buyankina.common.navigation.features.AuthNavigation
+import project.e_buyankina.feature.profile.ui.News
 
 internal class ProfileViewModel(
     private val getCurrentUserUseCase: GetCurrentUserUseCase,

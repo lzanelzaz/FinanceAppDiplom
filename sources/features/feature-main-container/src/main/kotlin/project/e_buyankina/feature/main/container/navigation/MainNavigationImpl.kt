@@ -5,7 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import project.e_buyankina.common.navigation.features.MainNavigation
-import project.e_buyankina.feature.main.container.MainScreen
+import project.e_buyankina.feature.main.container.ui.MainScreen
 
 internal class MainNavigationImpl : MainNavigation {
 

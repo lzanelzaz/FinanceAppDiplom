@@ -1,4 +1,4 @@
-package project.e_buyankina.feature.main.container
+package project.e_buyankina.feature.main.container.ui
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon

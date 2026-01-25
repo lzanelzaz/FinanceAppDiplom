@@ -7,13 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "project.e_buyankina.main"
+    namespace = "project.e_buyankina.feature.profile"
     compileSdk = 36
 
     defaultConfig {
         minSdk = 29
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     compileOptions {

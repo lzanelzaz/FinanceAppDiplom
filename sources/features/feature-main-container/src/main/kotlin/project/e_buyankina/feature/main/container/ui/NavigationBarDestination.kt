@@ -1,7 +1,8 @@
-package project.e_buyankina.feature.main.container
+package project.e_buyankina.feature.main.container.ui
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import project.e_buyankina.feature.main.container.R
 
 internal enum class NavigationBarDestination(
     val route: String,
