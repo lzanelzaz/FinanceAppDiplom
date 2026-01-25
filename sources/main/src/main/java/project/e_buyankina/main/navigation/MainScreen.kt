@@ -1,6 +1,6 @@
 package project.e_buyankina.main.navigation
 
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -26,9 +26,9 @@ import project.e_buyankina.main.profile.ProfileScreen
 
 @Composable
 internal fun MainScreen(
-    onOpenAuth: () -> Unit,
+    appNavController: NavHostController,
 ) {
-    val navController = rememberNavController()
+    val nestedNavController = rememberNavController()
     val startDestination = Destination.FINANCES
     var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.ordinal) }
 
@@ -40,7 +40,7 @@ internal fun MainScreen(
                     NavigationBarItem(
                         selected = selectedDestination == index,
                         onClick = {
-                            navController.navigate(route = destination.route)
+                            nestedNavController.navigate(route = destination.route)
                             selectedDestination = index
                         },
                         icon = {
@@ -54,25 +54,25 @@ internal fun MainScreen(
                 }
             }
         }
-    ) { _ ->
+    ) { paddingValues ->
         AppNavHost(
-            navController,
+            nestedNavController,
             startDestination,
-            onOpenAuth,
-            modifier = Modifier.statusBarsPadding()
+            appNavController,
+            modifier = Modifier.padding(paddingValues)
         )
     }
 }
 
 @Composable
 private fun AppNavHost(
-    navController: NavHostController,
+    nestedNavController: NavHostController,
     startDestination: Destination,
-    onOpenAuth: () -> Unit,
+    appNavController: NavHostController,
     modifier: Modifier = Modifier
 ) {
     NavHost(
-        navController,
+        navController = nestedNavController,
         startDestination = startDestination.route
     ) {
         Destination.entries.forEach { destination ->
@@ -80,7 +80,7 @@ private fun AppNavHost(
                 when (destination) {
 //                    Destination.FINANCES -> SongsScreen()
 //                    Destination.ANALYTICS -> AlbumScreen()
-                    Destination.PROFILE -> ProfileScreen(modifier, onOpenAuth)
+                    Destination.PROFILE -> ProfileScreen(modifier, appNavController)
                     else -> {}
                 }
             }
@@ -92,6 +92,6 @@ private fun AppNavHost(
 @Composable
 fun Preview() {
     AppTheme {
-        MainScreen {}
+        MainScreen(rememberNavController())
     }
 }

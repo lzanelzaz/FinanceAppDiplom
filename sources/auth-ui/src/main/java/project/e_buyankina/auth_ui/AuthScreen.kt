@@ -31,6 +31,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.compose.viewmodel.koinViewModel
 import project.e_buyankina.common_ui.loadingbutton.LoadingButton
@@ -38,7 +39,9 @@ import project.e_buyankina.common_ui.preview.DayNightPreviews
 import project.e_buyankina.common_ui.theme.AppTheme
 
 @Composable
-internal fun AuthScreen() {
+internal fun AuthScreen(
+    appNavController: NavHostController,
+) {
     val viewModel = koinViewModel<AuthViewModel>()
     val state = viewModel.uiState.collectAsState()
     val context = LocalContext.current
@@ -49,6 +52,7 @@ internal fun AuthScreen() {
                     val text = news.text ?: context.getString(R.string.smth_error)
                     Toast.makeText(context, text, Toast.LENGTH_LONG).show()
                 }
+                is News.OpenRoute -> appNavController.navigate(news.route)
             }
         }
     }

@@ -2,5 +2,5 @@ package project.e_buyankina.main.profile
 
 internal sealed interface News {
 
-    object OpenAuth : News
+    class OpenRoute(val route: String) : News
 }

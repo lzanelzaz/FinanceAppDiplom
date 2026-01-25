@@ -6,9 +6,13 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import project.e_buyankina.auth_api.domain.usecases.GetCurrentUserUseCase
+import project.e_buyankina.common.navigation.features.AuthNavigation
+import project.e_buyankina.common.navigation.features.MainNavigation
 
 internal class SplashViewModel(
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
+    val authNavigation: AuthNavigation,
+    val mainNavigation: MainNavigation,
 ) : ViewModel() {
 
     private val newsChannel = Channel<News>(Channel.BUFFERED)
@@ -21,11 +25,8 @@ internal class SplashViewModel(
     private fun loadUserInfo() {
         viewModelScope.launch {
             val user = getCurrentUserUseCase()
-            if (user == null) {
-                newsChannel.send(News.OpenAuthScreen)
-            } else {
-                newsChannel.send(News.OpenMainScreen)
-            }
+            val route = if (user == null) authNavigation.authRoute else mainNavigation.mainRoute
+            newsChannel.send(News.OpenRoute(route))
         }
     }
 }

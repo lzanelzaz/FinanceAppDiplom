@@ -3,7 +3,6 @@ package project.e_buyankina.main.profile
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -21,6 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.compose.viewmodel.koinViewModel
 import project.e_buyankina.common_ui.loadingbutton.LoadingButton
@@ -31,14 +31,14 @@ import project.e_buyankina.main.R
 @Composable
 internal fun ProfileScreen(
     modifier: Modifier = Modifier,
-    onOpenAuth: () -> Unit,
+    appNavController: NavHostController,
 ) {
     val viewModel = koinViewModel<ProfileViewModel>()
     val state = viewModel.state.collectAsState()
     LaunchedEffect(Unit) {
         viewModel.news.collectLatest { news ->
             when (news) {
-                News.OpenAuth -> onOpenAuth()
+                is News.OpenRoute -> appNavController.navigate(news.route)
             }
         }
     }
@@ -52,15 +52,15 @@ internal fun ProfileScreen(
 @Composable
 private fun ProfileContent(
     modifier: Modifier = Modifier,
-    state: State, onLogOut: () -> Unit
+    state: State,
+    onLogOut: () -> Unit,
 ) {
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         HeaderBlock(state, modifier = Modifier.fillMaxHeight(0.5f))
-        Spacer(modifier = Modifier.fillMaxHeight(0.25f))
-        ButtonBlock(state, modifier = Modifier.fillMaxHeight(0.5f), onLogOut)
+        ButtonBlock(state, modifier = Modifier.fillMaxHeight(), onLogOut)
     }
 }
 

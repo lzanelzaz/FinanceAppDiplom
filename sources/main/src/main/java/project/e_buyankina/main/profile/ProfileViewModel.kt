@@ -10,10 +10,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import project.e_buyankina.auth_api.domain.usecases.GetCurrentUserUseCase
 import project.e_buyankina.auth_api.domain.usecases.LogOutUseCase
+import project.e_buyankina.common.navigation.features.AuthNavigation
 
 internal class ProfileViewModel(
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
     private val logOutUseCase: LogOutUseCase,
+    private val authNavigation: AuthNavigation,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(State())
@@ -39,7 +41,7 @@ internal class ProfileViewModel(
                 it.copy(isLoading = true)
             }
             logOutUseCase()
-            newsChannel.send(News.OpenAuth)
+            newsChannel.send(News.OpenRoute(authNavigation.authRoute))
         }
     }
 }

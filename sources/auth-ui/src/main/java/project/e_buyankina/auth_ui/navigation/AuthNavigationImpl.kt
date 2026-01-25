@@ -17,7 +17,7 @@ internal class AuthNavigationImpl : AuthNavigation {
         modifier: Modifier
     ) {
         navGraphBuilder.composable(baseRoute) {
-            AuthScreen()
+            AuthScreen(appNavController = navController)
         }
     }
 }

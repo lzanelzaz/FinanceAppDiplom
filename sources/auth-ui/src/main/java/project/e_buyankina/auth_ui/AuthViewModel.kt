@@ -13,11 +13,13 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import project.e_buyankina.auth_api.domain.usecases.AuthorizeUseCase
 import project.e_buyankina.auth_api.domain.usecases.CreateUserUseCase
+import project.e_buyankina.common.navigation.features.MainNavigation
 import project.e_buyankina.common_network.ServerException
 
 internal class AuthViewModel(
     private val createUserUseCase: CreateUserUseCase,
     private val authorizeUseCase: AuthorizeUseCase,
+    private val mainNavigation: MainNavigation,
 ) : ViewModel() {
 
     private val state = MutableStateFlow(State())
@@ -89,7 +91,7 @@ internal class AuthViewModel(
                     )
                 }
             }.onSuccess {
-
+                newsChannel.send(News.OpenRoute(mainNavigation.mainRoute))
             }.onFailure { error ->
                 newsChannel.send(News.ShowToast((error as? ServerException)?.message))
                 state.update {
