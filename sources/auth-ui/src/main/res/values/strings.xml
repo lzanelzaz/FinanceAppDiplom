@@ -11,4 +11,5 @@
     <string name="email_error">Невалидный Email</string>
     <string name="password_error">Пароль должен содержать хотя бы 1 цифру, минимум 5 символов</string>
     <string name="name_error">Поле должно быть заполнено</string>
+    <string name="smth_error">Что-то пошло не так</string>
 </resources>

@@ -5,6 +5,7 @@ import project.e_buyankina.auth_api.data.db.ProfileInfoDao
 import project.e_buyankina.auth_api.data.mappers.ProfileInfoApiToDbMapper
 import project.e_buyankina.auth_api.data.mappers.ProfileInfoDbToDomainMapper
 import project.e_buyankina.auth_api.domain.ProfileInfo
+import project.e_buyankina.common_network.retrofitErrorHandler
 
 internal interface AuthRepository {
 
@@ -36,12 +37,13 @@ internal class AuthRepositoryImpl(
         password: String,
         username: String
     ): ProfileInfo {
-        val accountId = service.createUser(login, password, username).accountId
+        val accountId =
+            retrofitErrorHandler(service.createUser(login, password, username)).accountId
         return getProfileInfo(accountId)
     }
 
     override suspend fun authorize(login: String, password: String): ProfileInfo {
-        val accountId = service.authorize(login, password).accountId
+        val accountId = retrofitErrorHandler(service.authorize(login, password)).accountId
         return getProfileInfo(accountId)
     }
 
@@ -55,7 +57,7 @@ internal class AuthRepositoryImpl(
     }
 
     private suspend fun getProfileInfo(accountId: String): ProfileInfo {
-        val api = service.profileInfo(accountId)
+        val api = retrofitErrorHandler(service.profileInfo(accountId))
         val db = profileInfoApiToDbMapper(accountId, api)
         dao.insert(db)
         return profileInfoDbToDomainMapper(db)

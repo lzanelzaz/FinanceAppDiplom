@@ -2,15 +2,18 @@ package project.e_buyankina.auth_ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import project.e_buyankina.auth_api.domain.usecases.AuthorizeUseCase
 import project.e_buyankina.auth_api.domain.usecases.CreateUserUseCase
+import project.e_buyankina.common_network.ServerException
 
 internal class AuthViewModel(
     private val createUserUseCase: CreateUserUseCase,
@@ -22,17 +25,8 @@ internal class AuthViewModel(
         .map(::mapToUi)
         .stateIn(viewModelScope, SharingStarted.Eagerly, mapToUi(initState()))
 
-    private fun initState() = State(
-        isHasAccount = true,
-        emailText = "",
-        isEmailError = false,
-        passwordText = "",
-        isPasswordError = false,
-        isPasswordMasked = false,
-        nameText = "",
-        isNameError = false,
-        isLoading = false,
-    )
+    private val newsChannel = Channel<News>(Channel.BUFFERED)
+    val news = newsChannel.receiveAsFlow()
 
     fun onEmailTextUpdated(text: String) {
         state.update {
@@ -76,18 +70,31 @@ internal class AuthViewModel(
         state.update {
             it.copy(isLoading = true)
         }
+        enterUser()
+    }
+
+    private fun enterUser() = with(state.value) {
         viewModelScope.launch {
-            if (isHasAccount) {
-                authorizeUseCase(
-                    login = emailText,
-                    password = passwordText,
-                )
-            } else {
-                createUserUseCase(
-                    login = emailText,
-                    password = passwordText,
-                    username = nameText,
-                )
+            runCatching {
+                if (isHasAccount) {
+                    authorizeUseCase(
+                        login = emailText,
+                        password = passwordText,
+                    )
+                } else {
+                    createUserUseCase(
+                        login = emailText,
+                        password = passwordText,
+                        username = nameText,
+                    )
+                }
+            }.onSuccess {
+
+            }.onFailure { error ->
+                newsChannel.send(News.ShowToast((error as? ServerException)?.message))
+                state.update {
+                    it.copy(isLoading = false)
+                }
             }
         }
     }
@@ -114,6 +121,18 @@ internal class AuthViewModel(
             isLoading = isLoading,
         )
     }
+
+    private fun initState() = State(
+        isHasAccount = true,
+        emailText = "",
+        isEmailError = false,
+        passwordText = "",
+        isPasswordError = false,
+        isPasswordMasked = false,
+        nameText = "",
+        isNameError = false,
+        isLoading = false,
+    )
 
     private data class State(
         val isHasAccount: Boolean,

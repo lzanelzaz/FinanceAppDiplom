@@ -1,5 +1,6 @@
 package project.e_buyankina.auth_ui
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -19,15 +20,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.collectLatest
 import org.koin.compose.viewmodel.koinViewModel
 import project.e_buyankina.common_ui.loadingbutton.LoadingButton
 import project.e_buyankina.common_ui.preview.DayNightPreviews
@@ -37,6 +41,17 @@ import project.e_buyankina.common_ui.theme.AppTheme
 fun AuthScreen() {
     val viewModel = koinViewModel<AuthViewModel>()
     val state = viewModel.uiState.collectAsState()
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        viewModel.news.collectLatest { news ->
+            when (news) {
+                is News.ShowToast -> {
+                    val text = news.text ?: context.getString(R.string.smth_error)
+                    Toast.makeText(context, text, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
     AuthScreenContent(
         state = state.value,
         onPasswordIconClick = { viewModel.onPasswordIconClick() },
@@ -49,7 +64,7 @@ fun AuthScreen() {
 }
 
 @Composable
-internal fun AuthScreenContent(
+private fun AuthScreenContent(
     state: UiState,
     onEmailTextUpdated: (String) -> Unit,
     onPasswordTextUpdated: (String) -> Unit,

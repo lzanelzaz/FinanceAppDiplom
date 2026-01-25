@@ -41,6 +41,7 @@ dependencies {
     implementation(libs.kotlinx.serialization)
 
     implementation(project(":sources:common-ui"))
+    implementation(project(":sources:common-network"))
 
     implementation(project(":sources:auth-api"))
     implementation(libs.koin)
