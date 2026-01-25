@@ -65,7 +65,7 @@ dependencies {
     implementation(project(":sources:auth-api"))
     implementation(project(":sources:auth-ui"))
     implementation(project(":sources:common-ui"))
-    implementation(project(":sources:splashscreen"))
+    implementation(project(":sources:features:feature-splashscreen"))
     implementation(project(":sources:common-navigation"))
     implementation(libs.androidx.navigation.compose)
 

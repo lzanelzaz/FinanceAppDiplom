@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "project.e_buyankina.splashscreen"
+    namespace = "project.e_buyankina.feature.splashscreen"
     compileSdk = 36
 
     defaultConfig {

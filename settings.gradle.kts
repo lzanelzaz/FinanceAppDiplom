@@ -21,7 +21,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "Finance App"
 include(":app")
-include(":sources:splashscreen")
 include(":sources:auth-ui")
 include(":sources:common-ui")
 include(":sources:common-network")
@@ -32,3 +31,4 @@ include(":sources:features:feature-finances")
 include(":sources:features:mylibrary")
 include(":sources:features:feature-main-container")
 include(":sources:features:feature-profile")
+include(":sources:features:feature-splashscreen")

@@ -1,11 +1,11 @@
-package project.e_buyankina.splashscreen.navigation
+package project.e_buyankina.feature.splashscreen.navigation
 
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import project.e_buyankina.common.navigation.features.SplashNavigation
-import project.e_buyankina.splashscreen.SplashScreen
+import project.e_buyankina.feature.splashscreen.ui.SplashScreen
 
 internal class SplashNavigationImpl : SplashNavigation {
 

@@ -1,4 +1,4 @@
-package project.e_buyankina.splashscreen
+package project.e_buyankina.feature.splashscreen.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
