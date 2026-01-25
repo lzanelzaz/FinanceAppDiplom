@@ -13,26 +13,54 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.collectLatest
+import org.koin.compose.viewmodel.koinViewModel
 import project.e_buyankina.common_ui.loadingbutton.LoadingButton
 import project.e_buyankina.common_ui.preview.DayNightPreviews
 import project.e_buyankina.common_ui.theme.AppTheme
 import project.e_buyankina.main.R
 
 @Composable
-internal fun ProfileScreen(state: State) {
+internal fun ProfileScreen(
+    modifier: Modifier = Modifier,
+    onOpenAuth: () -> Unit,
+) {
+    val viewModel = koinViewModel<ProfileViewModel>()
+    val state = viewModel.state.collectAsState()
+    LaunchedEffect(Unit) {
+        viewModel.news.collectLatest { news ->
+            when (news) {
+                News.OpenAuth -> onOpenAuth()
+            }
+        }
+    }
+    ProfileContent(
+        modifier = modifier,
+        state = state.value,
+        onLogOut = { viewModel.logOut() },
+    )
+}
+
+@Composable
+private fun ProfileContent(
+    modifier: Modifier = Modifier,
+    state: State, onLogOut: () -> Unit
+) {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         HeaderBlock(state, modifier = Modifier.fillMaxHeight(0.5f))
         Spacer(modifier = Modifier.fillMaxHeight(0.25f))
-        ButtonBlock(state, modifier = Modifier.fillMaxHeight(0.5f))
+        ButtonBlock(state, modifier = Modifier.fillMaxHeight(0.5f), onLogOut)
     }
 }
 
@@ -47,7 +75,7 @@ internal fun HeaderBlock(state: State, modifier: Modifier) {
             contentDescription = null,
             modifier = Modifier
                 .size(256.dp)
-                .padding(top = 32.dp)
+                .padding(top = 8.dp)
         )
         Text(
             text = state.userName,
@@ -60,15 +88,15 @@ internal fun HeaderBlock(state: State, modifier: Modifier) {
 }
 
 @Composable
-internal fun ButtonBlock(state: State, modifier: Modifier) {
+internal fun ButtonBlock(state: State, modifier: Modifier, onLogOut: () -> Unit) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center,
     ) {
         LoadingButton(
-            onClick = {},
+            onClick = onLogOut,
             modifier = Modifier
-                .padding(top = 72.dp, bottom = 20.dp)
+                .padding(top = 72.dp, bottom = 32.dp)
                 .size(width = 246.dp, height = 56.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.error,
@@ -98,7 +126,7 @@ private fun Preview() {
         isLoading = false,
     )
     AppTheme {
-        ProfileScreen(state = state)
+        ProfileContent(state = state, onLogOut = {})
     }
 }
 
@@ -110,6 +138,6 @@ private fun PreviewLoading() {
         isLoading = true,
     )
     AppTheme {
-        ProfileScreen(state = state)
+        ProfileContent(state = state, onLogOut = {})
     }
 }

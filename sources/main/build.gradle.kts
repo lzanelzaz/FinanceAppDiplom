@@ -39,8 +39,10 @@ dependencies {
 
     implementation(project(":sources:common-ui"))
     implementation(project(":sources:common-navigation"))
+    implementation(project(":sources:auth-api"))
     implementation(libs.androidx.navigation.compose)
     implementation(libs.koin)
+    implementation(libs.koin.compose)
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
