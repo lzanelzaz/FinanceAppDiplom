@@ -1,4 +1,4 @@
-package project.e_buyankina.common_ui.loadingbutton
+package project.e_buyankina.common.ui.loadingbutton
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio

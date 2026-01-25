@@ -20,8 +20,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import project.e_buyankina.common_ui.preview.DayNightPreviews
-import project.e_buyankina.common_ui.theme.AppTheme
+import project.e_buyankina.common.ui.preview.DayNightPreviews
+import project.e_buyankina.common.ui.theme.AppTheme
 
 @Composable
 internal fun MainScreen(

@@ -1,6 +1,6 @@
 package project.e_buyankina.feature.auth.api.data
 
-import project.e_buyankina.common_network.retrofitErrorHandler
+import project.e_buyankina.common.network.retrofitErrorHandler
 import project.e_buyankina.feature.auth.api.data.api.AuthService
 import project.e_buyankina.feature.auth.api.data.db.ProfileInfoDao
 import project.e_buyankina.feature.auth.api.data.mappers.ProfileInfoApiToDbMapper

@@ -45,5 +45,5 @@ dependencies {
     implementation(libs.room.runtime)
     ksp(libs.room.compiler)
 
-    implementation(project(":sources:common-network"))
+    implementation(project(":sources:common:common-network"))
 }

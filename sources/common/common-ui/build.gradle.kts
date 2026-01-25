@@ -7,15 +7,13 @@ plugins {
 }
 
 android {
-    namespace = "project.e_buyankina.common_ui"
+    namespace = "project.e_buyankina.common.ui"
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
         minSdk = 29
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     compileOptions {

@@ -64,9 +64,9 @@ dependencies {
     implementation(project(":sources:features:app-database"))
     implementation(project(":sources:features:feature-auth-api"))
     implementation(project(":sources:features:feature-auth-ui"))
-    implementation(project(":sources:common-ui"))
+    implementation(project(":sources:common:common-ui"))
     implementation(project(":sources:features:feature-splashscreen"))
-    implementation(project(":sources:common-navigation"))
+    implementation(project(":sources:common:common-navigation"))
     implementation(libs.androidx.navigation.compose)
 
     debugImplementation(libs.androidx.ui.tooling)

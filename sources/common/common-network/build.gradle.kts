@@ -8,13 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "project.e_buyankina.common_network"
+    namespace = "project.e_buyankina.common.network"
     compileSdk = 36
 
     defaultConfig {
         minSdk = 29
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     compileOptions {

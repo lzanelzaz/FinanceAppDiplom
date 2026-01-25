@@ -1,4 +1,4 @@
-package project.e_buyankina.common_network
+package project.e_buyankina.common.network
 
 class ServerException(
     val resultCode: Int,

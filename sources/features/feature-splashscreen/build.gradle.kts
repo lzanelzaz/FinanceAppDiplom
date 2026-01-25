@@ -47,8 +47,8 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(project(":sources:features:feature-auth-api"))
     implementation(project(":sources:features:feature-auth-ui"))
-    implementation(project(":sources:common-ui"))
-    implementation(project(":sources:common-navigation"))
+    implementation(project(":sources:common:common-ui"))
+    implementation(project(":sources:common:common-navigation"))
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)

@@ -1,4 +1,4 @@
-package project.e_buyankina.common_ui.theme
+package project.e_buyankina.common.ui.theme
 
 import androidx.compose.material3.Typography
 

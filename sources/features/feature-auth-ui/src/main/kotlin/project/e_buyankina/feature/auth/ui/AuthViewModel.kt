@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import project.e_buyankina.common.navigation.features.MainNavigation
-import project.e_buyankina.common_network.ServerException
+import project.e_buyankina.common.network.ServerException
 import project.e_buyankina.feature.auth.R
 import project.e_buyankina.feature.auth.api.domain.usecases.AuthorizeUseCase
 import project.e_buyankina.feature.auth.api.domain.usecases.CreateUserUseCase

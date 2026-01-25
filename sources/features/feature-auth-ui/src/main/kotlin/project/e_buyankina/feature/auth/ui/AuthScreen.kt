@@ -34,9 +34,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.compose.viewmodel.koinViewModel
-import project.e_buyankina.common_ui.loadingbutton.LoadingButton
-import project.e_buyankina.common_ui.preview.DayNightPreviews
-import project.e_buyankina.common_ui.theme.AppTheme
+import project.e_buyankina.common.ui.loadingbutton.LoadingButton
+import project.e_buyankina.common.ui.preview.DayNightPreviews
+import project.e_buyankina.common.ui.theme.AppTheme
 import project.e_buyankina.feature.auth.R
 
 @Composable

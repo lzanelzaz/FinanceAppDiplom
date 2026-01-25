@@ -1,4 +1,4 @@
-package project.e_buyankina.common_network
+package project.e_buyankina.common.network
 
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType

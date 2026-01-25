@@ -1,4 +1,4 @@
-package project.e_buyankina.common_ui.preview
+package project.e_buyankina.common.ui.preview
 
 import android.content.res.Configuration
 import androidx.compose.ui.tooling.preview.Preview

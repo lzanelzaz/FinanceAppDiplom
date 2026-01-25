@@ -11,7 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import project.e_buyankina.common.navigation.AppNavGraph
-import project.e_buyankina.common_ui.theme.AppTheme
+import project.e_buyankina.common.ui.theme.AppTheme
 
 class SplashActivity : ComponentActivity() {
 

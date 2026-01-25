@@ -3,7 +3,7 @@ package project.e_buyankina.feature.auth.api.di
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
-import project.e_buyankina.common_network.ServiceCreator
+import project.e_buyankina.common.network.ServiceCreator
 import project.e_buyankina.feature.auth.api.data.AuthRepository
 import project.e_buyankina.feature.auth.api.data.AuthRepositoryImpl
 import project.e_buyankina.feature.auth.api.data.api.AuthService

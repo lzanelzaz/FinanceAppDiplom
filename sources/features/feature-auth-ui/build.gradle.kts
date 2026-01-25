@@ -38,9 +38,9 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.kotlinx.serialization)
 
-    implementation(project(":sources:common-ui"))
-    implementation(project(":sources:common-network"))
-    implementation(project(":sources:common-navigation"))
+    implementation(project(":sources:common:common-ui"))
+    implementation(project(":sources:common:common-network"))
+    implementation(project(":sources:common:common-navigation"))
     implementation(libs.androidx.navigation.compose)
     implementation(project(":sources:features:feature-auth-api"))
     implementation(libs.koin)
