@@ -3,15 +3,18 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)
 }
 
 android {
-    namespace = "project.e_buyankina.feature.profile"
+    namespace = "project.e_buyankina.feature.auth.api"
     compileSdk = 36
 
     defaultConfig {
         minSdk = 29
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     compileOptions {
@@ -35,13 +38,12 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
-    implementation(project(":sources:common-ui"))
-    implementation(project(":sources:common-navigation"))
-    implementation(project(":sources:features:feature-auth-api"))
-    implementation(libs.androidx.navigation.compose)
+    implementation(libs.retrofit)
+    implementation(libs.kotlinx.serialization)
     implementation(libs.koin)
-    implementation(libs.koin.compose)
 
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.room.runtime)
+    ksp(libs.room.compiler)
+
+    implementation(project(":sources:common-network"))
 }

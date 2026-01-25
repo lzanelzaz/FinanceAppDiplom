@@ -61,9 +61,9 @@ dependencies {
     implementation(libs.koin.compose)
     implementation(libs.splashscreen)
 
-    implementation(project(":sources:app-database"))
-    implementation(project(":sources:auth-api"))
-    implementation(project(":sources:auth-ui"))
+    implementation(project(":sources:features:app-database"))
+    implementation(project(":sources:features:feature-auth-api"))
+    implementation(project(":sources:features:feature-auth-ui"))
     implementation(project(":sources:common-ui"))
     implementation(project(":sources:features:feature-splashscreen"))
     implementation(project(":sources:common-navigation"))
