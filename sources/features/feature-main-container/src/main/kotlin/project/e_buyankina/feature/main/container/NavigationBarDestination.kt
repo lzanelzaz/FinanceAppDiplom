@@ -1,10 +1,9 @@
-package project.e_buyankina.main.navigation
+package project.e_buyankina.feature.main.container
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import project.e_buyankina.main.R
 
-internal enum class Destination(
+internal enum class NavigationBarDestination(
     val route: String,
     @param:StringRes val label: Int,
     @param:DrawableRes val icon: Int,

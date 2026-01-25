@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "project.e_buyankina.feature.finances"
+    namespace = "project.e_buyankina.feature.main.container"
     compileSdk = 36
 
     defaultConfig {
@@ -35,7 +35,9 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
+    implementation(project(":sources:common-ui"))
     implementation(project(":sources:common-navigation"))
+    implementation(project(":sources:auth-api"))
     implementation(libs.androidx.navigation.compose)
     implementation(libs.koin)
     implementation(libs.koin.compose)

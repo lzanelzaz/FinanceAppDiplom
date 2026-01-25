@@ -1,10 +1,11 @@
-package project.e_buyankina.main.navigation
+package project.e_buyankina.feature.main.container.navigation
 
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import project.e_buyankina.common.navigation.features.MainNavigation
+import project.e_buyankina.feature.main.container.MainScreen
 
 internal class MainNavigationImpl : MainNavigation {
 

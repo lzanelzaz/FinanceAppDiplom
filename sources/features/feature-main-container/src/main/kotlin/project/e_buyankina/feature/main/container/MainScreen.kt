@@ -1,4 +1,4 @@
-package project.e_buyankina.main.navigation
+package project.e_buyankina.feature.main.container
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -22,21 +22,20 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import project.e_buyankina.common_ui.preview.DayNightPreviews
 import project.e_buyankina.common_ui.theme.AppTheme
-import project.e_buyankina.main.profile.ProfileScreen
 
 @Composable
 internal fun MainScreen(
     appNavController: NavHostController,
 ) {
     val nestedNavController = rememberNavController()
-    val startDestination = Destination.FINANCES
+    val startDestination = NavigationBarDestination.FINANCES
     var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.ordinal) }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surface,
         bottomBar = {
             NavigationBar(windowInsets = NavigationBarDefaults.windowInsets) {
-                Destination.entries.forEachIndexed { index, destination ->
+                NavigationBarDestination.entries.forEachIndexed { index, destination ->
                     NavigationBarItem(
                         selected = selectedDestination == index,
                         onClick = {
@@ -67,7 +66,7 @@ internal fun MainScreen(
 @Composable
 private fun AppNavHost(
     nestedNavController: NavHostController,
-    startDestination: Destination,
+    startDestination: NavigationBarDestination,
     appNavController: NavHostController,
     modifier: Modifier = Modifier
 ) {
@@ -75,12 +74,12 @@ private fun AppNavHost(
         navController = nestedNavController,
         startDestination = startDestination.route
     ) {
-        Destination.entries.forEach { destination ->
+        NavigationBarDestination.entries.forEach { destination ->
             composable(destination.route) {
                 when (destination) {
 //                    Destination.FINANCES -> SongsScreen()
 //                    Destination.ANALYTICS -> AlbumScreen()
-                    Destination.PROFILE -> ProfileScreen(modifier, appNavController)
+//                    Destination.PROFILE -> ProfileScreen(modifier, appNavController)
                     else -> {}
                 }
             }
