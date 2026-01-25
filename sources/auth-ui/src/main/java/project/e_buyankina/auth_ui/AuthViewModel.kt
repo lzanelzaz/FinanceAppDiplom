@@ -20,10 +20,10 @@ internal class AuthViewModel(
     private val authorizeUseCase: AuthorizeUseCase,
 ) : ViewModel() {
 
-    private val state = MutableStateFlow(initState())
+    private val state = MutableStateFlow(State())
     val uiState: StateFlow<UiState> = state
         .map(::mapToUi)
-        .stateIn(viewModelScope, SharingStarted.Eagerly, mapToUi(initState()))
+        .stateIn(viewModelScope, SharingStarted.Eagerly, mapToUi(State()))
 
     private val newsChannel = Channel<News>(Channel.BUFFERED)
     val news = newsChannel.receiveAsFlow()
@@ -122,28 +122,16 @@ internal class AuthViewModel(
         )
     }
 
-    private fun initState() = State(
-        isHasAccount = true,
-        emailText = "",
-        isEmailError = false,
-        passwordText = "",
-        isPasswordError = false,
-        isPasswordMasked = false,
-        nameText = "",
-        isNameError = false,
-        isLoading = false,
-    )
-
     private data class State(
-        val isHasAccount: Boolean,
-        val emailText: String,
-        val isEmailError: Boolean,
-        val passwordText: String,
-        val isPasswordError: Boolean,
-        val isPasswordMasked: Boolean,
-        val nameText: String,
-        val isNameError: Boolean,
-        val isLoading: Boolean,
+        val isHasAccount: Boolean = true,
+        val emailText: String = "",
+        val isEmailError: Boolean = false,
+        val passwordText: String = "",
+        val isPasswordError: Boolean = false,
+        val isPasswordMasked: Boolean = false,
+        val nameText: String = "",
+        val isNameError: Boolean = false,
+        val isLoading: Boolean = false,
     )
 
     private companion object {
