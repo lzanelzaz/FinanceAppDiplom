@@ -8,6 +8,7 @@ import org.koin.dsl.module
 import project.e_buyankina.app_database.appDatabaseModule
 import project.e_buyankina.auth_api.di.authApiModule
 import project.e_buyankina.auth_ui.di.authUiModule
+import project.e_buyankina.splashscreen.di.splashModule
 
 class FinanceApp : Application() {
 
@@ -25,6 +26,7 @@ class FinanceApp : Application() {
 val koinModules = module {
     includes(
         appDatabaseModule,
+        splashModule,
         authApiModule,
         authUiModule,
     )

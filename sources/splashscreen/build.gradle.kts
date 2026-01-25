@@ -39,7 +39,8 @@ dependencies {
     implementation(libs.androidx.material3)
 
     implementation(libs.splashscreen)
-
+    implementation(libs.koin)
+    implementation(libs.koin.compose)
     implementation(project(":sources:auth-api"))
     implementation(project(":sources:auth-ui"))
     implementation(project(":sources:common-ui"))
