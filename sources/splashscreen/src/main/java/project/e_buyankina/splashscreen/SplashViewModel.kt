@@ -15,12 +15,16 @@ internal class SplashViewModel(
     val news = newsChannel.receiveAsFlow()
 
     init {
+        loadUserInfo()
+    }
+
+    private fun loadUserInfo() {
         viewModelScope.launch {
             val user = getCurrentUserUseCase()
             if (user == null) {
-
+                newsChannel.send(News.OpenAuthScreen)
             } else {
-
+                newsChannel.send(News.OpenMainScreen)
             }
         }
     }

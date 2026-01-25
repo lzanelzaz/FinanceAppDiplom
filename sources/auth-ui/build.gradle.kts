@@ -40,7 +40,8 @@ dependencies {
 
     implementation(project(":sources:common-ui"))
     implementation(project(":sources:common-network"))
-
+    implementation(project(":sources:common-navigation"))
+    implementation(libs.androidx.navigation.compose)
     implementation(project(":sources:auth-api"))
     implementation(libs.koin)
     implementation(libs.koin.compose)

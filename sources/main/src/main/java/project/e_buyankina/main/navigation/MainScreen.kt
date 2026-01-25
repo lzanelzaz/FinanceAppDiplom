@@ -17,7 +17,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import project.e_buyankina.common_ui.preview.DayNightPreviews
 import project.e_buyankina.common_ui.theme.AppTheme
@@ -64,15 +63,7 @@ private fun AppNavHost(
         navController,
         startDestination = startDestination.route
     ) {
-        Destination.entries.forEach { destination ->
-            composable(destination.route) {
-//                when (destination) {
-//                    Destination.FINANCES -> SongsScreen()
-//                    Destination.ANALYTICS -> AlbumScreen()
-//                    Destination.PROFILE -> PlaylistScreen()
-//                }
-            }
-        }
+
     }
 }
 

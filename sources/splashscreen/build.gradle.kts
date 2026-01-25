@@ -24,6 +24,9 @@ android {
         compilerOptions {
             jvmTarget = JvmTarget.fromTarget("17")
         }
+        sourceSets.all {
+            languageSettings.enableLanguageFeature("ExplicitBackingFields")
+        }
     }
 }
 
@@ -41,9 +44,11 @@ dependencies {
     implementation(libs.splashscreen)
     implementation(libs.koin)
     implementation(libs.koin.compose)
+    implementation(libs.androidx.navigation.compose)
     implementation(project(":sources:auth-api"))
     implementation(project(":sources:auth-ui"))
     implementation(project(":sources:common-ui"))
+    implementation(project(":sources:common-navigation"))
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)

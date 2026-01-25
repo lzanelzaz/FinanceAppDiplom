@@ -4,32 +4,39 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import kotlinx.coroutines.flow.collectLatest
-import org.koin.compose.viewmodel.koinViewModel
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import project.e_buyankina.common.navigation.AppNavGraph
 import project.e_buyankina.common_ui.theme.AppTheme
 
 class SplashActivity : ComponentActivity() {
+
+    private var showSplashScreen: Boolean = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        splashScreen.setKeepOnScreenCondition { showSplashScreen }
         setContent {
             AppTheme {
-                val viewModel = koinViewModel<SplashViewModel>()
-                LaunchedEffect(Unit) {
-                    viewModel.news.collectLatest { news ->
-                        when (news) {
-
-                            else -> {
-                                splashScreen.setKeepOnScreenCondition { false }
-                                //AuthScreen()
-                            }
-                        }
-                    }
-                }
+                val navController = rememberNavController()
+                AppNavGraph(
+                    modifier = Modifier.Companion,
+                    navController = navController,
+                )
             }
+        }
+    }
+
+    fun finishSplashScreen() {
+        lifecycleScope.launch {
+            delay(50)
+            showSplashScreen = false
         }
     }
 }

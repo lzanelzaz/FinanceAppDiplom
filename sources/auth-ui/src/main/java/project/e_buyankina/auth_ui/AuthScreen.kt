@@ -38,7 +38,7 @@ import project.e_buyankina.common_ui.preview.DayNightPreviews
 import project.e_buyankina.common_ui.theme.AppTheme
 
 @Composable
-fun AuthScreen() {
+internal fun AuthScreen() {
     val viewModel = koinViewModel<AuthViewModel>()
     val state = viewModel.uiState.collectAsState()
     val context = LocalContext.current
