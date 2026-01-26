@@ -1,4 +1,4 @@
-package project.e_buyankina.main.profile
+package project.e_buyankina.feature.profile.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,13 +9,14 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import project.e_buyankina.common.navigation.features.AuthNavigation
+import project.e_buyankina.feature.auth.api.domain.usecases.ClearProfileInfoUseCase
 import project.e_buyankina.feature.auth.api.domain.usecases.GetCurrentUserUseCase
-import project.e_buyankina.feature.auth.api.domain.usecases.LogOutUseCase
-import project.e_buyankina.feature.profile.ui.News
+import project.e_buyankina.feature.operations.api.domain.usecases.ClearOperationsUseCase
 
 internal class ProfileViewModel(
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
-    private val logOutUseCase: LogOutUseCase,
+    private val clearProfileInfoUseCase: ClearProfileInfoUseCase,
+    private val clearOperationsUseCase: ClearOperationsUseCase,
     private val authNavigation: AuthNavigation,
 ) : ViewModel() {
 
@@ -41,7 +42,8 @@ internal class ProfileViewModel(
             _state.update {
                 it.copy(isLoading = true)
             }
-            logOutUseCase()
+            clearOperationsUseCase()
+            clearProfileInfoUseCase()
             newsChannel.send(News.OpenRoute(authNavigation.authRoute))
         }
     }

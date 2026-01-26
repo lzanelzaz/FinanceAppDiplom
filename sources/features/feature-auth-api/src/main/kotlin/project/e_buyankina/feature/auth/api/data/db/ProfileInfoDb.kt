@@ -6,7 +6,14 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "ProfileInfoDb")
 class ProfileInfoDb(
-    @PrimaryKey val accountId: String,
-    @ColumnInfo(name = "username") val username: String,
-    @ColumnInfo(name = "email") val email: String,
+
+    @PrimaryKey
+    @ColumnInfo(name = "accountId")
+    val accountId: String,
+
+    @ColumnInfo(name = "username")
+    val username: String,
+
+    @ColumnInfo(name = "email")
+    val email: String,
 )

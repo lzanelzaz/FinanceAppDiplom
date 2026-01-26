@@ -27,8 +27,6 @@ import project.e_buyankina.common.ui.loadingbutton.LoadingButton
 import project.e_buyankina.common.ui.preview.DayNightPreviews
 import project.e_buyankina.common.ui.theme.AppTheme
 import project.e_buyankina.feature.profile.R
-import project.e_buyankina.main.profile.ProfileViewModel
-import project.e_buyankina.main.profile.State
 
 @Composable
 internal fun ProfileScreen(

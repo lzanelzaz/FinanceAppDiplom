@@ -1,4 +1,4 @@
-package project.e_buyankina.main.profile
+package project.e_buyankina.feature.profile.ui
 
 internal data class State(
     val userName: String = "",

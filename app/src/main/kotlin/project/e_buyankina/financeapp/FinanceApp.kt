@@ -5,11 +5,12 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
-import project.e_buyankina.app_database.appDatabaseModule
-import project.e_buyankina.auth_ui.di.authUiModule
+import project.e_buyankina.app.database.appDatabaseModule
 import project.e_buyankina.feature.auth.api.di.authApiModule
-import project.e_buyankina.main.di.mainModule
-import project.e_buyankina.splashscreen.di.splashModule
+import project.e_buyankina.feature.auth.di.authUiModule
+import project.e_buyankina.feature.main.container.di.mainModule
+import project.e_buyankina.feature.operations.api.di.operationsApiModule
+import project.e_buyankina.feature.splashscreen.di.splashModule
 
 class FinanceApp : Application() {
 
@@ -30,6 +31,7 @@ val koinModules = module {
         splashModule,
         authApiModule,
         authUiModule,
+        operationsApiModule,
         mainModule,
     )
 }

@@ -2,14 +2,14 @@ package project.e_buyankina.feature.auth.api.domain.usecases
 
 import project.e_buyankina.feature.auth.api.data.AuthRepository
 
-interface LogOutUseCase {
+interface ClearProfileInfoUseCase {
 
     suspend operator fun invoke()
 }
 
-internal class LogOutUseCaseImpl(
+internal class ClearProfileInfoUseCaseImpl(
     private val repository: AuthRepository,
-) : LogOutUseCase {
+) : ClearProfileInfoUseCase {
 
     override suspend fun invoke() {
         return repository.logOut()

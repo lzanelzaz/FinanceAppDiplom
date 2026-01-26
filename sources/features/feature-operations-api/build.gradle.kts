@@ -3,11 +3,12 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
 }
 
 android {
-    namespace = "project.e_buyankina.app.database"
+    namespace = "project.e_buyankina.feature.operations.api"
     compileSdk = 36
 
     defaultConfig {
@@ -28,11 +29,12 @@ android {
 }
 
 dependencies {
+    implementation(libs.retrofit)
+    implementation(libs.kotlinx.serialization)
     implementation(libs.koin)
-
-    implementation(project(":sources:features:feature-auth-api"))
-    implementation(project(":sources:features:feature-operations-api"))
 
     implementation(libs.room.runtime)
     ksp(libs.room.compiler)
+
+    implementation(project(":sources:common:common-network"))
 }
