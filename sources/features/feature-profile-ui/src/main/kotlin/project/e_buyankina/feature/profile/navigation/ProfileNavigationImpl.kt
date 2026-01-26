@@ -22,4 +22,4 @@ internal class ProfileNavigationImpl : ProfileNavigation {
     }
 }
 
-private const val baseRoute = "profile"
+private const val baseRoute = "profileRoute"

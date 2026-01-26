@@ -22,4 +22,4 @@ internal class AuthNavigationImpl : AuthNavigation {
     }
 }
 
-private const val baseRoute = "auth"
+private const val baseRoute = "authRoute"

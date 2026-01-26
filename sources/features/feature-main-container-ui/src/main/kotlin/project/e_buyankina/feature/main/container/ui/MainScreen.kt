@@ -39,10 +39,11 @@ internal fun MainScreen(
         bottomBar = {
             NavigationBar(windowInsets = NavigationBarDefaults.windowInsets) {
                 NavigationBarDestination.entries.forEachIndexed { index, destination ->
+                    val route = destination.route()
                     NavigationBarItem(
                         selected = selectedDestination == index,
                         onClick = {
-                            nestedNavController.navigate(route = destination.route)
+                            nestedNavController.navigate(route = route)
                             selectedDestination = index
                         },
                         icon = {
@@ -77,7 +78,7 @@ private fun MainNavHost(
     val profileNavigation = getKoin().get<ProfileNavigation>()
     NavHost(
         navController = nestedNavController,
-        startDestination = startDestination.route
+        startDestination = startDestination.route()
     ) {
         register(
             financesNavigation,

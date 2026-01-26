@@ -22,4 +22,4 @@ internal class SplashNavigationImpl : SplashNavigation {
     }
 }
 
-private const val baseRoute = "splash"
+private const val baseRoute = "splashRoute"

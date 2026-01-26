@@ -5,6 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import project.e_buyankina.common.navigation.features.FinancesNavigation
+import project.e_buyankina.feature.finances.create_edit_operation.CreateOrEditOperationScreen
 import project.e_buyankina.feature.finances.ui.FinancesScreen
 
 internal class FinancesNavigationImpl : FinancesNavigation {
@@ -17,9 +18,14 @@ internal class FinancesNavigationImpl : FinancesNavigation {
         modifier: Modifier
     ) {
         navGraphBuilder.composable(baseRoute) {
-            FinancesScreen(modifier, navController)
+            FinancesScreen(navController, modifier)
+        }
+        navGraphBuilder.composable(createOrEditOperationRoute) {
+            CreateOrEditOperationScreen(modifier)
         }
     }
 }
 
-private const val baseRoute = "finances"
+private const val baseRoute = "financesRoute"
+
+internal const val createOrEditOperationRoute = "createOrEditOperation"

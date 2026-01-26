@@ -22,4 +22,4 @@ internal class MainNavigationImpl : MainNavigation {
     }
 }
 
-private const val baseRoute = "main"
+private const val baseRoute = "mainRoute"
