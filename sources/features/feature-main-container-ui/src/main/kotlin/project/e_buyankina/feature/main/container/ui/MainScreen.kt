@@ -20,6 +20,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import org.koin.compose.getKoin
+import project.e_buyankina.common.navigation.features.FinancesNavigation
 import project.e_buyankina.common.navigation.features.ProfileNavigation
 import project.e_buyankina.common.navigation.register
 import project.e_buyankina.common.ui.preview.DayNightPreviews
@@ -72,11 +73,17 @@ private fun MainNavHost(
     appNavController: NavHostController,
     modifier: Modifier = Modifier
 ) {
+    val financesNavigation = getKoin().get<FinancesNavigation>()
     val profileNavigation = getKoin().get<ProfileNavigation>()
     NavHost(
         navController = nestedNavController,
         startDestination = startDestination.route
     ) {
+        register(
+            financesNavigation,
+            navController = appNavController,
+            modifier = modifier
+        )
         register(
             profileNavigation,
             navController = appNavController,

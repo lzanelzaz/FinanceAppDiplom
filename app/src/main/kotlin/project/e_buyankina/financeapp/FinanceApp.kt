@@ -8,6 +8,7 @@ import org.koin.dsl.module
 import project.e_buyankina.app.database.appDatabaseModule
 import project.e_buyankina.feature.auth.api.di.authApiModule
 import project.e_buyankina.feature.auth.di.authUiModule
+import project.e_buyankina.feature.finances.di.financesModule
 import project.e_buyankina.feature.main.container.di.mainModule
 import project.e_buyankina.feature.operations.api.di.operationsApiModule
 import project.e_buyankina.feature.profile.di.profileModule
@@ -34,6 +35,7 @@ val koinModules = module {
         authUiModule,
         operationsApiModule,
         mainModule,
+        financesModule,
         profileModule,
     )
 }

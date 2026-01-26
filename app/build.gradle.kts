@@ -66,9 +66,10 @@ dependencies {
     implementation(project(":sources:features:feature-auth-ui"))
     implementation(project(":sources:features:feature-operations-api"))
     implementation(project(":sources:common:common-ui"))
-    implementation(project(":sources:features:feature-splashscreen"))
-    implementation(project(":sources:features:feature-main-container"))
-    implementation(project(":sources:features:feature-profile"))
+    implementation(project(":sources:features:feature-splashscreen-ui"))
+    implementation(project(":sources:features:feature-main-container-ui"))
+    implementation(project(":sources:features:feature-finances-ui"))
+    implementation(project(":sources:features:feature-profile-ui"))
     implementation(project(":sources:common:common-navigation"))
     implementation(libs.androidx.navigation.compose)
 
