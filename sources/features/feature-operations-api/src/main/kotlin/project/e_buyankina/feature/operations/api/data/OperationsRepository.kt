@@ -86,11 +86,11 @@ internal class OperationsRepositoryImpl(
     }
 
     override fun getOperations(accountId: String): Flow<List<Operation>> = flow {
+        emit(dao.getAll().map(operationDbToDomainMapper))
+        dao.deleteAll()
         val api = retrofitErrorHandler(service.getOperations(accountId))
         val db = api.map { operationApiToDbMapper(accountId, it) }
         dao.insertAll(db)
-        emitAll(
-            dao.observe().map { it.map(operationDbToDomainMapper) }
-        )
+        emitAll(dao.observe().map { it.map(operationDbToDomainMapper) })
     }
 }

@@ -10,6 +10,9 @@ import kotlinx.coroutines.flow.Flow
 interface OperationsDao {
 
     @Query("SELECT * FROM OperationDb")
+    suspend fun getAll(): List<OperationDb>
+
+    @Query("SELECT * FROM OperationDb")
     fun observe(): Flow<List<OperationDb>>
 
     @Query("SELECT * FROM OperationDb WHERE operationId = :operationId")
