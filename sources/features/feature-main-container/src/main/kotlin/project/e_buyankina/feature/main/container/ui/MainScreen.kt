@@ -18,8 +18,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import org.koin.compose.getKoin
+import project.e_buyankina.common.navigation.features.ProfileNavigation
+import project.e_buyankina.common.navigation.register
 import project.e_buyankina.common.ui.preview.DayNightPreviews
 import project.e_buyankina.common.ui.theme.AppTheme
 
@@ -54,7 +56,7 @@ internal fun MainScreen(
             }
         }
     ) { paddingValues ->
-        AppNavHost(
+        MainNavHost(
             nestedNavController,
             startDestination,
             appNavController,
@@ -64,26 +66,22 @@ internal fun MainScreen(
 }
 
 @Composable
-private fun AppNavHost(
+private fun MainNavHost(
     nestedNavController: NavHostController,
     startDestination: NavigationBarDestination,
     appNavController: NavHostController,
     modifier: Modifier = Modifier
 ) {
+    val profileNavigation = getKoin().get<ProfileNavigation>()
     NavHost(
         navController = nestedNavController,
         startDestination = startDestination.route
     ) {
-        NavigationBarDestination.entries.forEach { destination ->
-            composable(destination.route) {
-                when (destination) {
-//                    Destination.FINANCES -> SongsScreen()
-//                    Destination.ANALYTICS -> AlbumScreen()
-//                    Destination.PROFILE -> ProfileScreen(modifier, appNavController)
-                    else -> {}
-                }
-            }
-        }
+        register(
+            profileNavigation,
+            navController = appNavController,
+            modifier = modifier
+        )
     }
 }
 

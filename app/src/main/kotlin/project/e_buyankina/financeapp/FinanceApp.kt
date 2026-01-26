@@ -10,6 +10,7 @@ import project.e_buyankina.feature.auth.api.di.authApiModule
 import project.e_buyankina.feature.auth.di.authUiModule
 import project.e_buyankina.feature.main.container.di.mainModule
 import project.e_buyankina.feature.operations.api.di.operationsApiModule
+import project.e_buyankina.feature.profile.di.profileModule
 import project.e_buyankina.feature.splashscreen.di.splashModule
 
 class FinanceApp : Application() {
@@ -33,5 +34,6 @@ val koinModules = module {
         authUiModule,
         operationsApiModule,
         mainModule,
+        profileModule,
     )
 }
