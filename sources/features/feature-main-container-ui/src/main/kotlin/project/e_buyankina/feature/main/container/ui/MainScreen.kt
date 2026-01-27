@@ -2,7 +2,6 @@ package project.e_buyankina.feature.main.container.ui
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
@@ -35,7 +34,6 @@ internal fun MainScreen(
     var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.ordinal) }
 
     Scaffold(
-        containerColor = MaterialTheme.colorScheme.surface,
         bottomBar = {
             NavigationBar(windowInsets = NavigationBarDefaults.windowInsets) {
                 NavigationBarDestination.entries.forEachIndexed { index, destination ->

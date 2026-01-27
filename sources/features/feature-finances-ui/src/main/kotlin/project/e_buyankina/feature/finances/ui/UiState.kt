@@ -1,6 +1,6 @@
 package project.e_buyankina.feature.finances.ui
 
-import androidx.annotation.DrawableRes
+import project.e_buyankina.feature.finances.common.Subtype
 
 internal data class UiState(
     val operations: List<UiOperation> = emptyList()
@@ -8,10 +8,9 @@ internal data class UiState(
 
     data class UiOperation(
         val operationId: String,
-        @param:DrawableRes val icon: Int,
         val amount: String,
         val date: String,
-        val subtype: String,
+        val subtype: Subtype,
         val description: String?,
     )
 }

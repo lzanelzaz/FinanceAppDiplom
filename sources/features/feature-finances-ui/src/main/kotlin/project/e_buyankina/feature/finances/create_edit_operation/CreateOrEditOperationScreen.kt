@@ -27,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.ToggleButton
@@ -42,6 +43,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -79,12 +81,22 @@ private fun CreateOrEditOperationContent(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
+    val focusManager = LocalFocusManager.current
     ModalBottomSheet(
-        modifier = modifier,
         onDismissRequest = { showBottomSheetUpdate(false) },
-        sheetState = sheetState
+        sheetState = sheetState,
+        containerColor = MaterialTheme.colorScheme.surface,
     ) {
-        Column {
+        Column(
+            modifier = modifier
+                .padding(bottom = 8.dp)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                ) {
+                    focusManager.clearFocus()
+                },
+        ) {
             var selectedTypeIndex by remember { mutableIntStateOf(state.selectedType.ordinal) }
             var selectedSubtypeIndex by remember { mutableIntStateOf(state.selectedSubtype.index) }
             var showDatePicker = remember { false }
@@ -109,7 +121,7 @@ private fun CreateOrEditOperationContent(
                     onDismiss = { showDatePicker = false }
                 )
             }
-
+            TextFieldsBlock(state)
             KeyboardBlock(state) { _ -> }
             ButtonsBlock()
         }
@@ -158,7 +170,7 @@ private fun SubtypesBlock(
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
-        modifier = Modifier.padding(vertical = 8.dp)
+        modifier = Modifier.padding(vertical = 12.dp)
     ) {
         items(state.subtypes, { subtype -> subtype.text }) {
             Subtype(it, isSelected, selectedChanged)
@@ -191,6 +203,23 @@ private fun DateAmountBlock(
         }
 
     }
+}
+
+@Composable
+private fun TextFieldsBlock(
+    state: UiState,
+) {
+    OutlinedTextField(
+        value = "",
+        onValueChange = {},
+        enabled = true,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        label = {
+            Text(text = stringResource(R.string.details))
+        },
+    )
 }
 
 @Composable
@@ -259,11 +288,7 @@ private fun Subtype(
     ) {
         Box(
             modifier = Modifier
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null,
-                    onClick = { selectedChanged(item.index) }
-                )
+                .clickable(onClick = { selectedChanged(item.index) })
                 .clip(CircleShape)
                 .background(
                     if (isSelected(item.index)) {
