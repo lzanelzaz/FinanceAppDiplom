@@ -34,6 +34,9 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.material3.window)
+    implementation(libs.androidx.material3.adaptive)
+
     implementation(project(":sources:common:common-ui"))
     implementation(project(":sources:common:common-navigation"))
     implementation(project(":sources:features:feature-auth-api"))

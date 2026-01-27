@@ -1,0 +1,20 @@
+<resources>
+    <string name="expense">Расход</string>
+    <string name="income">Доход</string>
+    <string name="save">Сохранить</string>
+    <string name="details">Детали</string>
+
+    <string name="entertainment">Развлечения</string>
+    <string name="groceries">Продукты</string>
+    <string name="cafe">Кафе</string>
+    <string name="transport">Транспорт</string>
+    <string name="household">Бытовые</string>
+    <string name="clothing">Одежда</string>
+    <string name="gifts">Подарки</string>
+    <string name="mandatory">Обязательные</string>
+    <string name="beauty">Красота</string>
+
+    <string name="salary">Зарплата</string>
+    <string name="interest">Проценты</string>
+    <string name="transfers">Переводы</string>
+</resources>
