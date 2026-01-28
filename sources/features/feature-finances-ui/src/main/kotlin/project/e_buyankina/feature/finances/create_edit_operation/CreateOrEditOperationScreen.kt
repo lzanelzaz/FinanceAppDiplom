@@ -35,6 +35,7 @@ import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -43,11 +44,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import org.koin.androidx.compose.koinViewModel
 import project.e_buyankina.common.ui.loadingbutton.LoadingButton
 import project.e_buyankina.common.ui.preview.DayNightPreviews
 import project.e_buyankina.common.ui.theme.AppTheme
@@ -59,6 +62,7 @@ import project.e_buyankina.feature.finances.common.Type
 @Composable
 internal fun CreateOrEditOperationScreen(
     modifier: Modifier = Modifier,
+    operationId: String? = null,
     showBottomSheetUpdate: (Boolean) -> Unit,
 ) {
 //            Button(onClick = {
@@ -70,12 +74,21 @@ internal fun CreateOrEditOperationScreen(
 //            }) {
 //                Text("Hide bottom sheet")
 //            }
+    val viewModel = koinViewModel<CreateOrEditOperationViewModel>()
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        viewModel.load(operationId) {
+            context.getString(it)
+        }
+    }
 
     CreateOrEditOperationContent(
         modifier = modifier,
         state = initUi(),
         showBottomSheetUpdate,
-    )
+        {},
+
+        )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -83,7 +96,12 @@ internal fun CreateOrEditOperationScreen(
 private fun CreateOrEditOperationContent(
     modifier: Modifier = Modifier,
     state: UiState,
-    showBottomSheetUpdate: (Boolean) -> Unit,
+    showBottomSheetUpdate: (Boolean) -> Unit = {},
+    onStateChanged: State.() -> Unit = {},
+    onDateUpdated: (Long) -> Unit = {},
+    onKeyClicked: (UiState.KeyBoardItem) -> Unit = {},
+    onSaveClick: () -> Unit = {},
+    onDeleteClick: () -> Unit = {},
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
@@ -110,10 +128,10 @@ private fun CreateOrEditOperationContent(
                 selectedChanged = { selectedSubtypeIndex = it },
             )
             DateAmountBlock(
-                state = state
-            ) {
-                showDatePicker = true
-            }
+                state = state,
+                onShowDatePicker = { showDatePicker = true },
+                onDateUpdated = onDateUpdated,
+            )
             if (showDatePicker) {
                 DatePickerModal(
                     onDateSelected = { },
@@ -121,8 +139,10 @@ private fun CreateOrEditOperationContent(
                 )
             }
             TextFieldsBlock(state)
-            KeyboardBlock(state) { _ -> }
-            ButtonsBlock()
+            KeyboardBlock(state, onKeyClicked)
+            ButtonsBlock(
+                onSaveClick = onSaveClick, onDeleteClick = onDeleteClick
+            )
         }
     }
 }
@@ -181,6 +201,7 @@ private fun SubtypesBlock(
 private fun DateAmountBlock(
     state: UiState,
     onShowDatePicker: () -> Unit,
+    onDateUpdated: (Long) -> Unit,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically
@@ -224,7 +245,7 @@ private fun TextFieldsBlock(
 @Composable
 private fun KeyboardBlock(
     state: UiState,
-    onClick: (UiState.KeyBoardItem) -> Unit,
+    onKeyClicked: (UiState.KeyBoardItem) -> Unit,
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
@@ -232,13 +253,15 @@ private fun KeyboardBlock(
         userScrollEnabled = false,
     ) {
         items(state.keyboard) {
-            Key(it, onClick)
+            Key(it, onKeyClicked)
         }
     }
 }
 
 @Composable
 private fun ButtonsBlock(
+    onSaveClick: () -> Unit,
+    onDeleteClick: () -> Unit,
 ) {
     Row(
         Modifier
@@ -321,8 +344,7 @@ private fun Key(
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
-                onClick = { onClick(item) }
-            )
+                onClick = { onClick(item) })
             .clip(RoundedCornerShape(8.dp))
             .background(MaterialTheme.colorScheme.outlineVariant),
         contentAlignment = Alignment.Center
