@@ -13,6 +13,7 @@ import project.e_buyankina.feature.auth.api.domain.usecases.GetCurrentUserUseCas
 import project.e_buyankina.feature.finances.R
 import project.e_buyankina.feature.finances.common.Subtype
 import project.e_buyankina.feature.finances.common.Type
+import project.e_buyankina.feature.operations.api.domain.TransactionType
 import project.e_buyankina.feature.operations.api.domain.usecases.CreateOperationUseCase
 import project.e_buyankina.feature.operations.api.domain.usecases.DeleteOperationUseCase
 import project.e_buyankina.feature.operations.api.domain.usecases.EditOperationUseCase
@@ -45,7 +46,10 @@ internal class CreateOrEditOperationViewModel(
                     State(
                         selectedDate = date,
                         amount = amount,
-                        selectedType = Type.valueOf(type.serialName),
+                        selectedType = when (type) {
+                            TransactionType.EXPENSE -> Type.EXPENSE
+                            TransactionType.INCOME -> Type.INCOME
+                        },
                         selectedSubtype = Subtype.findByCode(subtype)
                     )
                 }

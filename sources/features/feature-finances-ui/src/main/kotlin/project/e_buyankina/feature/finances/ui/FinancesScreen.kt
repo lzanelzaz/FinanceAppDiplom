@@ -52,9 +52,6 @@ internal fun FinancesScreen(
     FinancesContent(
         modifier.fillMaxSize(),
         state.value,
-        {
-
-        },
     )
 }
 
@@ -62,9 +59,9 @@ internal fun FinancesScreen(
 internal fun FinancesContent(
     modifier: Modifier = Modifier,
     state: UiState,
-    onOperationClick: (UiOperation) -> Unit,
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
+    var clickedOperationId: String? by remember { mutableStateOf(null) }
     Scaffold(
         modifier = modifier,
         floatingActionButton = {
@@ -82,20 +79,25 @@ internal fun FinancesContent(
         Box(
             modifier = Modifier
                 .consumeWindowInsets(paddingValues)
-                .padding(horizontal = 16.dp)
         ) {
             LazyColumn {
                 state.operationsGrouped.forEach { grouped ->
                     item(grouped.date) { Date(grouped.date) }
                     items(grouped.operations, { it.operationId }) {
-                        Operation(it, onOperationClick)
+                        Operation(it) { operation ->
+                            clickedOperationId = operation.operationId
+                            showBottomSheet = true
+                        }
                     }
                 }
             }
         }
     }
     if (showBottomSheet) {
-        CreateOrEditOperationScreen(Modifier) { newValue -> showBottomSheet = newValue }
+        CreateOrEditOperationScreen(Modifier, clickedOperationId) { newValue ->
+            showBottomSheet = newValue
+            clickedOperationId = null
+        }
     }
 }
 
@@ -104,7 +106,7 @@ private fun Date(
     date: String
 ) {
     Text(
-        modifier = Modifier.padding(vertical = 10.dp),
+        modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp),
         text = date,
         style = MaterialTheme.typography.labelLarge,
         fontWeight = FontWeight.Bold,
@@ -118,7 +120,8 @@ private fun Operation(
 ) {
     Row(
         Modifier
-            .padding(vertical = 4.dp)
+            .clickable { onOperationClick(operation) }
+            .padding(vertical = 4.dp, horizontal = 16.dp)
             .height(48.dp)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
@@ -188,6 +191,6 @@ private fun PreviewOperation() {
         FinancesContent(
             Modifier,
             UiState(listOf(initState))
-        ) {}
+        )
     }
 }
