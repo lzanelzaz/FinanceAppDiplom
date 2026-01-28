@@ -12,6 +12,6 @@ class TransactionTypeConverter {
 
     @TypeConverter
     fun toTransactionType(serialName: String): TransactionType {
-        return TransactionType.valueOf(serialName)
+        return TransactionType.entries.first { it.serialName == serialName }
     }
 }

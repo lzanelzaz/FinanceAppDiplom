@@ -38,7 +38,7 @@ import project.e_buyankina.common.ui.preview.DayNightPreviews
 import project.e_buyankina.common.ui.theme.AppTheme
 import project.e_buyankina.common.ui.theme.moneyRed
 import project.e_buyankina.feature.finances.R
-import project.e_buyankina.feature.finances.common.Expense
+import project.e_buyankina.feature.finances.common.Subtype
 import project.e_buyankina.feature.finances.create_edit_operation.CreateOrEditOperationScreen
 import project.e_buyankina.feature.finances.ui.UiState.UiOperation
 
@@ -84,8 +84,8 @@ internal fun FinancesContent(
                 .consumeWindowInsets(paddingValues)
                 .padding(horizontal = 16.dp)
         ) {
-            state.operationsGrouped.forEach { grouped ->
-                LazyColumn {
+            LazyColumn {
+                state.operationsGrouped.forEach { grouped ->
                     item(grouped.date) { Date(grouped.date) }
                     items(grouped.operations, { it.operationId }) {
                         Operation(it, onOperationClick)
@@ -173,23 +173,21 @@ private fun Operation(
 @DayNightPreviews
 @Composable
 private fun PreviewOperation() {
+    val initState = UiState.OperationsGrouped(
+        "11.11.2025",
+        listOf(
+            UiOperation(
+                operationId = "",
+                amount = "+1 000 000 ₽",
+                subtype = Subtype.Expense.ENTERTAINMENT,
+                description = "Описание wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww"
+            )
+        )
+    )
     AppTheme {
         FinancesContent(
             Modifier,
-            UiState(listOf(initState()))
+            UiState(listOf(initState))
         ) {}
     }
 }
-
-private fun initState() = UiState.OperationsGrouped(
-    "11.11.2025",
-    listOf(
-        UiOperation(
-            operationId = "",
-            amount = "+1 000 000 ₽",
-            date = "27.01.2026",
-            subtype = Expense.ENTERTAINMENT,
-            description = "Описание wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww"
-        )
-    )
-)

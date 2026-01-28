@@ -24,6 +24,15 @@ android {
             jvmTarget = JvmTarget.fromTarget("17")
         }
     }
+    android.buildFeatures.buildConfig = true
+    buildTypes {
+        debug {
+            buildConfigField("String", "BASE_SERVER_URL", "\"http://10.0.2.2:3004/\"")
+        }
+        release {
+            buildConfigField("String", "BASE_SERVER_URL", "\"https://ebuyankina/api/\"")
+        }
+    }
 }
 
 dependencies {

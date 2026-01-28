@@ -10,7 +10,7 @@ import java.time.LocalDate
 @Serializable
 internal class OperationApi(
 
-    @SerialName("operation_id")
+    @SerialName("id")
     val operationId: String,
 
     @SerialName("type")

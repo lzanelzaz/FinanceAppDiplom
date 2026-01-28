@@ -55,7 +55,6 @@ import project.e_buyankina.common.ui.loadingbutton.LoadingButton
 import project.e_buyankina.common.ui.preview.DayNightPreviews
 import project.e_buyankina.common.ui.theme.AppTheme
 import project.e_buyankina.feature.finances.R
-import project.e_buyankina.feature.finances.common.Expense
 import project.e_buyankina.feature.finances.common.Subtype
 import project.e_buyankina.feature.finances.common.Type
 
@@ -77,9 +76,7 @@ internal fun CreateOrEditOperationScreen(
     val viewModel = koinViewModel<CreateOrEditOperationViewModel>()
     val context = LocalContext.current
     LaunchedEffect(Unit) {
-        viewModel.load(operationId) {
-            context.getString(it)
-        }
+        viewModel.load(operationId)
     }
 
     CreateOrEditOperationContent(
@@ -115,7 +112,7 @@ private fun CreateOrEditOperationContent(
             modifier = modifier.padding(bottom = 8.dp),
         ) {
             var selectedTypeIndex by remember { mutableIntStateOf(state.selectedType.ordinal) }
-            var selectedSubtypeIndex by remember { mutableIntStateOf(state.selectedSubtype.index) }
+            var selectedSubtypeIndex = remember { state.selectedSubtype.code }
             var showDatePicker = remember { false }
             TypeBlock(
                 state = state,
@@ -184,8 +181,8 @@ private fun TypeBlock(
 @Composable
 private fun SubtypesBlock(
     state: UiState,
-    isSelected: (Int) -> Boolean,
-    selectedChanged: (Int) -> Unit,
+    isSelected: (String) -> Boolean,
+    selectedChanged: (String) -> Unit,
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
@@ -301,8 +298,8 @@ private fun ButtonsBlock(
 @Composable
 private fun Subtype(
     item: Subtype,
-    isSelected: (Int) -> Boolean,
-    selectedChanged: (Int) -> Unit
+    isSelected: (String) -> Boolean,
+    selectedChanged: (String) -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -310,10 +307,10 @@ private fun Subtype(
     ) {
         Box(
             modifier = Modifier
-                .clickable(onClick = { selectedChanged(item.index) })
+                .clickable(onClick = { selectedChanged(item.code) })
                 .clip(CircleShape)
                 .background(
-                    if (isSelected(item.index)) {
+                    if (isSelected(item.code)) {
                         MaterialTheme.colorScheme.primaryContainer
                     } else {
                         MaterialTheme.colorScheme.outlineVariant
@@ -401,9 +398,9 @@ private fun DatePickerModal(
 private fun initUi() = UiState(
     selectedDate = "27.01.2026",
     selectedType = Type.EXPENSE,
-    selectedSubtype = Expense.ENTERTAINMENT,
+    selectedSubtype = Subtype.Expense.ENTERTAINMENT,
     types = Type.entries,
-    subtypes = Expense.entries,
+    subtypes = Subtype.Expense.entries,
     amount = "1 000 ₽",
     keyboard = listOf(
         UiState.KeyBoardItem.Digit(1),

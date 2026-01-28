@@ -11,8 +11,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import project.e_buyankina.feature.auth.api.domain.usecases.GetCurrentUserUseCase
 import project.e_buyankina.feature.finances.R
-import project.e_buyankina.feature.finances.common.Expense
-import project.e_buyankina.feature.finances.common.Income
+import project.e_buyankina.feature.finances.common.Subtype
 import project.e_buyankina.feature.finances.common.Type
 import project.e_buyankina.feature.operations.api.domain.usecases.CreateOperationUseCase
 import project.e_buyankina.feature.operations.api.domain.usecases.DeleteOperationUseCase
@@ -35,7 +34,7 @@ internal class CreateOrEditOperationViewModel(
         .map(::mapToUi)
         .stateIn(viewModelScope, SharingStarted.Eagerly, mapToUi(State()))
 
-    fun load(operationId: String?, getString: (Int) -> String) {
+    fun load(operationId: String?) {
         viewModelScope.launch {
             val accountId = getCurrentUserUseCase()?.accountId
             requireNotNull(accountId)
@@ -47,7 +46,7 @@ internal class CreateOrEditOperationViewModel(
                         selectedDate = date,
                         amount = amount,
                         selectedType = Type.valueOf(type.serialName),
-                        selectedSubtype = (Expense.entries + Income.entries).first { getString(it.text) == subtype }
+                        selectedSubtype = Subtype.findByCode(subtype)
                     )
                 }
                 initState = operationState
@@ -64,8 +63,8 @@ internal class CreateOrEditOperationViewModel(
             selectedSubtype = selectedSubtype,
             types = Type.entries,
             subtypes = when (selectedType) {
-                Type.EXPENSE -> Expense.entries
-                Type.INCOME -> Income.entries
+                Type.EXPENSE -> Subtype.Expense.entries
+                Type.INCOME -> Subtype.Income.entries
             },
             keyboard = keyboard()
         )
