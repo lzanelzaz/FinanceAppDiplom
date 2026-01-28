@@ -3,7 +3,6 @@ package project.e_buyankina.feature.main.container.ui
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -35,7 +34,7 @@ internal fun MainScreen(
 
     Scaffold(
         bottomBar = {
-            NavigationBar(windowInsets = NavigationBarDefaults.windowInsets) {
+            NavigationBar {
                 NavigationBarDestination.entries.forEachIndexed { index, destination ->
                     val route = destination.route()
                     NavigationBarItem(

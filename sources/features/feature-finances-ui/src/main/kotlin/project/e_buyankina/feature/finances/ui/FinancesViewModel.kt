@@ -12,6 +12,8 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import project.e_buyankina.feature.auth.api.domain.usecases.GetCurrentUserUseCase
+import project.e_buyankina.feature.finances.common.Expense
+import project.e_buyankina.feature.finances.ui.UiState.UiOperation
 import project.e_buyankina.feature.operations.api.domain.Operation
 import project.e_buyankina.feature.operations.api.domain.usecases.SubscribeToOperationsUseCase
 
@@ -21,7 +23,7 @@ internal class FinancesViewModel(
 ) : ViewModel() {
 
     private val state = MutableStateFlow(State())
-    val uiState: StateFlow<UiState> = MutableStateFlow(UiState())
+    val uiState: StateFlow<UiState> = MutableStateFlow(initState())
 //        state
 //        .map(::mapToUi)
 //        .stateIn(viewModelScope, SharingStarted.Eagerly, UiState()))
@@ -46,5 +48,22 @@ internal class FinancesViewModel(
 
     private data class State(
         val operations: List<Operation> = emptyList()
+    )
+
+    private fun initState() = UiState(
+        listOf(
+            UiState.OperationsGrouped(
+                "11.11.2025",
+                listOf(
+                    UiOperation(
+                        operationId = "",
+                        amount = "+1 000 000 ₽",
+                        date = "27.01.2026",
+                        subtype = Expense.ENTERTAINMENT,
+                        description = "Описание wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww"
+                    )
+                )
+            )
+        )
     )
 }

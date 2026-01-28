@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -31,7 +33,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import org.koin.compose.viewmodel.koinViewModel
 import project.e_buyankina.common.ui.preview.DayNightPreviews
 import project.e_buyankina.common.ui.theme.AppTheme
@@ -43,14 +44,13 @@ import project.e_buyankina.feature.finances.ui.UiState.UiOperation
 
 @Composable
 internal fun FinancesScreen(
-    nestedNavController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
     val viewModel = koinViewModel<FinancesViewModel>()
     val state = viewModel.uiState.collectAsState()
 
     FinancesContent(
-        modifier,
+        modifier.fillMaxSize(),
         state.value,
         {
 
@@ -79,18 +79,36 @@ internal fun FinancesContent(
             }
         }
     ) { paddingValues ->
-        Box(modifier = modifier.padding(paddingValues)) {
-            LazyColumn {
-                items(state.operations, UiOperation::operationId) {
-                    Operation(it, onOperationClick)
+        Box(
+            modifier = Modifier
+                .consumeWindowInsets(paddingValues)
+                .padding(horizontal = 16.dp)
+        ) {
+            state.operationsGrouped.forEach { grouped ->
+                LazyColumn {
+                    item(grouped.date) { Date(grouped.date) }
+                    items(grouped.operations, { it.operationId }) {
+                        Operation(it, onOperationClick)
+                    }
                 }
-            }
-            if (showBottomSheet) {
-                CreateOrEditOperationScreen(Modifier) { newValue -> showBottomSheet = newValue }
             }
         }
     }
+    if (showBottomSheet) {
+        CreateOrEditOperationScreen(Modifier) { newValue -> showBottomSheet = newValue }
+    }
+}
 
+@Composable
+private fun Date(
+    date: String
+) {
+    Text(
+        modifier = Modifier.padding(vertical = 10.dp),
+        text = date,
+        style = MaterialTheme.typography.labelLarge,
+        fontWeight = FontWeight.Bold,
+    )
 }
 
 @Composable
@@ -100,7 +118,7 @@ private fun Operation(
 ) {
     Row(
         Modifier
-            .padding(16.dp)
+            .padding(vertical = 4.dp)
             .height(48.dp)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
@@ -156,16 +174,22 @@ private fun Operation(
 @Composable
 private fun PreviewOperation() {
     AppTheme {
-        Operation(
-            initState()
+        FinancesContent(
+            Modifier,
+            UiState(listOf(initState()))
         ) {}
     }
 }
 
-private fun initState() = UiOperation(
-    operationId = "",
-    amount = "+1 000 000 ₽",
-    date = "27.01.2026",
-    subtype = Expense.ENTERTAINMENT,
-    description = "Описание wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww"
+private fun initState() = UiState.OperationsGrouped(
+    "11.11.2025",
+    listOf(
+        UiOperation(
+            operationId = "",
+            amount = "+1 000 000 ₽",
+            date = "27.01.2026",
+            subtype = Expense.ENTERTAINMENT,
+            description = "Описание wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww"
+        )
+    )
 )

@@ -17,7 +17,7 @@ internal class FinancesNavigationImpl : FinancesNavigation {
         modifier: Modifier
     ) {
         navGraphBuilder.composable(baseRoute) {
-            FinancesScreen(navController, modifier)
+            FinancesScreen(modifier)
         }
     }
 }

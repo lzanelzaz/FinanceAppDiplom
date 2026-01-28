@@ -70,6 +70,12 @@ internal fun CreateOrEditOperationScreen(
 //            }) {
 //                Text("Hide bottom sheet")
 //            }
+
+    CreateOrEditOperationContent(
+        modifier = modifier,
+        state = initUi(),
+        showBottomSheetUpdate,
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -88,14 +94,7 @@ private fun CreateOrEditOperationContent(
         containerColor = MaterialTheme.colorScheme.surface,
     ) {
         Column(
-            modifier = modifier
-                .padding(bottom = 8.dp)
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null,
-                ) {
-                    focusManager.clearFocus()
-                },
+            modifier = modifier.padding(bottom = 8.dp),
         ) {
             var selectedTypeIndex by remember { mutableIntStateOf(state.selectedType.ordinal) }
             var selectedSubtypeIndex by remember { mutableIntStateOf(state.selectedSubtype.index) }
@@ -244,7 +243,7 @@ private fun ButtonsBlock(
     Row(
         Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(8.dp),
         horizontalArrangement = Arrangement.SpaceAround
     ) {
         LoadingButton(
@@ -253,7 +252,7 @@ private fun ButtonsBlock(
             modifier = Modifier.width(220.dp)
         ) {
             Text(
-                modifier = Modifier.padding(vertical = 8.dp),
+                modifier = Modifier.padding(vertical = 4.dp),
                 text = stringResource(R.string.save),
                 style = MaterialTheme.typography.titleMedium,
             )
@@ -268,7 +267,7 @@ private fun ButtonsBlock(
             loadingColor = MaterialTheme.colorScheme.onError,
         ) {
             Icon(
-                modifier = Modifier.padding(8.dp),
+                modifier = Modifier.padding(4.dp),
                 painter = painterResource(R.drawable.delete_24dp),
                 contentDescription = null,
             )
@@ -306,7 +305,7 @@ private fun Subtype(
         }
         Text(
             stringResource(item.text),
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.titleSmall,
         )
     }
 }
