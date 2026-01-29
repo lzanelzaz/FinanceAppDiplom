@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import project.e_buyankina.common.network.retrofitErrorHandler
 import project.e_buyankina.feature.operations.api.data.api.OperationsService
+import project.e_buyankina.feature.operations.api.data.db.OperationDb
 import project.e_buyankina.feature.operations.api.data.db.OperationsDao
 import project.e_buyankina.feature.operations.api.data.mappers.NewOperationDomainToApiMapper
 import project.e_buyankina.feature.operations.api.data.mappers.OperationApiToDbMapper
@@ -66,13 +67,13 @@ internal class OperationsRepositoryImpl(
         operation: Operation
     ) {
         val api = operationDomainToApiMapper(operation)
-        service.editOperation(accountId, api)
+        retrofitErrorHandler(service.editOperation(accountId, api))
         val db = operationApiToDbMapper(accountId, api)
         dao.insert(db)
     }
 
     override suspend fun deleteOperation(accountId: String, operationId: String) {
-        service.deleteOperation(accountId, operationId)
+        retrofitErrorHandler(service.deleteOperation(accountId, operationId))
         dao.delete(operationId)
     }
 
@@ -86,11 +87,11 @@ internal class OperationsRepositoryImpl(
     }
 
     override fun getOperations(accountId: String): Flow<List<Operation>> = flow {
-        emit(dao.getAll().map(operationDbToDomainMapper))
+        emit(dao.getAll().sortedByDescending(OperationDb::date).map(operationDbToDomainMapper))
         dao.deleteAll()
         val api = retrofitErrorHandler(service.getOperations(accountId))
         val db = api.map { operationApiToDbMapper(accountId, it) }
         dao.insertAll(db)
-        emitAll(dao.observe().map { it.map(operationDbToDomainMapper) })
+        emitAll(dao.observe().map { it.sortedByDescending(OperationDb::date).map(operationDbToDomainMapper) })
     }
 }

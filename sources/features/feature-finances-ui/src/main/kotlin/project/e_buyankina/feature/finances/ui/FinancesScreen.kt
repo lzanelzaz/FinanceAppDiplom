@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.FloatingActionButton
@@ -36,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import org.koin.compose.viewmodel.koinViewModel
 import project.e_buyankina.common.ui.preview.DayNightPreviews
 import project.e_buyankina.common.ui.theme.AppTheme
+import project.e_buyankina.common.ui.theme.moneyGreen
 import project.e_buyankina.common.ui.theme.moneyRed
 import project.e_buyankina.feature.finances.R
 import project.e_buyankina.feature.finances.common.Subtype
@@ -66,7 +68,10 @@ internal fun FinancesContent(
         modifier = modifier,
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { showBottomSheet = true },
+                onClick = {
+                    clickedOperationId = null
+                    showBottomSheet = true
+                },
                 shape = CircleShape,
             ) {
                 Icon(
@@ -82,7 +87,7 @@ internal fun FinancesContent(
         ) {
             LazyColumn {
                 state.operationsGrouped.forEach { grouped ->
-                    item(grouped.date) { Date(grouped.date) }
+                    stickyHeader { Date(grouped.date) }
                     items(grouped.operations, { it.operationId }) {
                         Operation(it) { operation ->
                             clickedOperationId = operation.operationId
@@ -95,18 +100,22 @@ internal fun FinancesContent(
     }
     if (showBottomSheet) {
         CreateOrEditOperationScreen(Modifier, clickedOperationId) { newValue ->
-            showBottomSheet = newValue
             clickedOperationId = null
+            showBottomSheet = newValue
         }
     }
 }
 
 @Composable
-private fun Date(
+private fun LazyItemScope.Date(
     date: String
 ) {
     Text(
-        modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp),
+        modifier = Modifier
+            .animateItem()
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.8f))
+            .padding(vertical = 10.dp, horizontal = 16.dp),
         text = date,
         style = MaterialTheme.typography.labelLarge,
         fontWeight = FontWeight.Bold,
@@ -114,12 +123,13 @@ private fun Date(
 }
 
 @Composable
-private fun Operation(
+private fun LazyItemScope.Operation(
     operation: UiOperation,
     onOperationClick: (UiOperation) -> Unit,
 ) {
     Row(
         Modifier
+            .animateItem()
             .clickable { onOperationClick(operation) }
             .padding(vertical = 4.dp, horizontal = 16.dp)
             .height(48.dp)
@@ -129,7 +139,6 @@ private fun Operation(
         Box(
             modifier = Modifier
                 .padding(end = 16.dp)
-                .clickable(onClick = { })
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.outlineVariant)
         ) {
@@ -156,7 +165,7 @@ private fun Operation(
                     text = operation.amount,
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
-                    color = moneyRed
+                    color = if (operation.isAmountColorPositive) moneyGreen else moneyRed
                 )
             }
             operation.description?.let {
@@ -183,7 +192,8 @@ private fun PreviewOperation() {
                 operationId = "",
                 amount = "+1 000 000 ₽",
                 subtype = Subtype.Expense.ENTERTAINMENT,
-                description = "Описание wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww"
+                description = "Описание wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww",
+                isAmountColorPositive = true,
             )
         )
     )

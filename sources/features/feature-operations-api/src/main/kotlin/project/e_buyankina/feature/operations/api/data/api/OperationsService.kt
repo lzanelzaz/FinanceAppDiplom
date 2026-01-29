@@ -19,13 +19,13 @@ internal interface OperationsService {
     suspend fun editOperation(
         @Query("account_id") accountId: String,
         @Body operation: OperationApi,
-    )
+    ): Response<Unit>
 
     @DELETE("delete_operation")
     suspend fun deleteOperation(
         @Query("account_id") accountId: String,
         @Query("operation_id") operationId: String,
-    )
+    ): Response<Unit>
 
     @GET("operations")
     suspend fun getOperations(

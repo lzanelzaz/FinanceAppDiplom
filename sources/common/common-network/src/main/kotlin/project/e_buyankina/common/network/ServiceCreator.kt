@@ -9,9 +9,11 @@ object ServiceCreator {
 
     private val contentType = "application/json".toMediaType()
 
+    private val json = Json { ignoreUnknownKeys = true }
+
     private val retrofit: Retrofit = Retrofit.Builder()
         .baseUrl(BuildConfig.BASE_SERVER_URL)
-        .addConverterFactory(Json.asConverterFactory(contentType))
+        .addConverterFactory(json.asConverterFactory(contentType))
         .build()
 
     fun <T> create(service: Class<T>): T {

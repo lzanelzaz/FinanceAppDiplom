@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -36,16 +37,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 import project.e_buyankina.common.ui.loadingbutton.LoadingButton
 import project.e_buyankina.common.ui.preview.DayNightPreviews
@@ -54,27 +54,25 @@ import project.e_buyankina.feature.finances.R
 import project.e_buyankina.feature.finances.common.Subtype
 import project.e_buyankina.feature.finances.common.Type
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun CreateOrEditOperationScreen(
     modifier: Modifier = Modifier,
     operationId: String? = null,
     showBottomSheetUpdate: (Boolean) -> Unit,
 ) {
-//            Button(onClick = {
-//                scope.launch { sheetState.hide() }.invokeOnCompletion {
-//                    if (!sheetState.isVisible) {
-//                        showBottomSheetUpdate(false)
-//                    }
-//                }
-//            }) {
-//                Text("Hide bottom sheet")
-//            }
     val viewModel = koinViewModel<CreateOrEditOperationViewModel>()
-    LaunchedEffect(Unit) {
+    val state = viewModel.uiState.collectAsState()
+    LaunchedEffect(operationId) {
         viewModel.load(operationId)
     }
-    val state = viewModel.uiState.collectAsState()
-
+    LaunchedEffect(Unit) {
+        viewModel.news.collectLatest { news ->
+            when (news) {
+                is News.Close -> showBottomSheetUpdate(false)
+            }
+        }
+    }
     CreateOrEditOperationContent(
         modifier = modifier,
         state = state.value,
@@ -82,6 +80,7 @@ internal fun CreateOrEditOperationScreen(
         onTypeChanged = viewModel::onTypeChanged,
         onSubtypeChanged = viewModel::onSubtypeChanged,
         onDateUpdated = viewModel::onDateChanged,
+        onDetailsChanged = viewModel::onDetailsChanged,
         onKeyClicked = viewModel::onKeyClicked,
         onSaveClick = viewModel::onSaveClick,
         onDeleteClick = viewModel::onDeleteClick
@@ -97,13 +96,12 @@ private fun CreateOrEditOperationContent(
     onTypeChanged: (Type) -> Unit = {},
     onSubtypeChanged: (Subtype) -> Unit = {},
     onDateUpdated: (Long?) -> Unit = {},
+    onDetailsChanged: (String) -> Unit = {},
     onKeyClicked: (UiState.KeyBoardItem) -> Unit = {},
     onSaveClick: () -> Unit = {},
     onDeleteClick: () -> Unit = {},
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val scope = rememberCoroutineScope()
-    val focusManager = LocalFocusManager.current
     var showDatePicker by remember { mutableStateOf(false) }
     ModalBottomSheet(
         onDismissRequest = { showBottomSheetUpdate(false) },
@@ -113,26 +111,21 @@ private fun CreateOrEditOperationContent(
         Column(
             modifier = modifier.padding(bottom = 8.dp),
         ) {
-            var selectedType by remember { mutableStateOf(state.selectedType) }
-            var selectedSubtype by remember { mutableStateOf(state.selectedSubtype) }
             TypeBlock(
                 state = state,
-                isSelected = { selectedType == it },
-                selectedChanged = {
-                    selectedType = it
-                    onTypeChanged(it)
-                },
+                isSelected = { state.selectedType == it },
+                selectedChanged = onTypeChanged,
             )
             SubtypesBlock(
                 state = state,
-                isSelected = { selectedSubtype == it },
-                selectedChanged = { selectedSubtype = it },
+                isSelected = { state.selectedSubtype == it },
+                selectedChanged = onSubtypeChanged,
             )
             DateAmountBlock(
                 state = state,
                 onShowDatePicker = { showDatePicker = true },
             )
-            TextFieldsBlock(state)
+            TextFieldsBlock(state, onDetailsChanged)
             KeyboardBlock(state, onKeyClicked)
             ButtonsBlock(
                 onSaveClick = onSaveClick, onDeleteClick = onDeleteClick
@@ -190,7 +183,9 @@ private fun SubtypesBlock(
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
-        modifier = Modifier.padding(vertical = 12.dp)
+        modifier = Modifier
+            .padding(vertical = 12.dp)
+            .heightIn(min = 230.dp)
     ) {
         items(state.subtypes, { subtype -> subtype.text }) {
             Subtype(it, isSelected, selectedChanged)
@@ -228,10 +223,11 @@ private fun DateAmountBlock(
 @Composable
 private fun TextFieldsBlock(
     state: UiState,
+    onDetailsChanged: (String) -> Unit,
 ) {
     OutlinedTextField(
-        value = "",
-        onValueChange = {},
+        value = state.details.orEmpty(),
+        onValueChange = onDetailsChanged,
         enabled = true,
         modifier = Modifier
             .fillMaxWidth()
@@ -270,7 +266,7 @@ private fun ButtonsBlock(
         horizontalArrangement = Arrangement.SpaceAround
     ) {
         LoadingButton(
-            {},
+            onSaveClick,
             isLoading = false,
             modifier = Modifier.width(220.dp)
         ) {
@@ -280,9 +276,9 @@ private fun ButtonsBlock(
                 style = MaterialTheme.typography.titleMedium,
             )
         }
-
         LoadingButton(
-            {}, isLoading = false,
+            onDeleteClick,
+            isLoading = false,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.error,
                 contentColor = MaterialTheme.colorScheme.onError,
@@ -310,7 +306,11 @@ private fun Subtype(
     ) {
         Box(
             modifier = Modifier
-                .clickable(onClick = { selectedChanged(item) })
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = { selectedChanged(item) }
+                )
                 .clip(CircleShape)
                 .background(
                     if (isSelected(item)) {
@@ -341,10 +341,7 @@ private fun Key(
     Box(
         modifier = Modifier
             .padding(4.dp)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClick = { onClick(item) })
+            .clickable { onClick(item) }
             .clip(RoundedCornerShape(8.dp))
             .background(MaterialTheme.colorScheme.outlineVariant),
         contentAlignment = Alignment.Center
@@ -371,6 +368,7 @@ private fun Key(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @DayNightPreviews
 @Composable
 private fun Preview() {

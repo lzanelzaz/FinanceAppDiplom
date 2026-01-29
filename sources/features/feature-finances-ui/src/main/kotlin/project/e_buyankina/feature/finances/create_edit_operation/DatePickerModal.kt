@@ -34,7 +34,7 @@ internal fun DatePickerModal(
         LocalContext provides context.createConfigurationContext(localizedConfiguration)
     ) {
         val datePickerState = rememberDatePickerState(
-            initialSelectedDateMillis = DateTime.parse(state.selectedDate).millis,
+            initialSelectedDateMillis = state.selectedDateMillis,
             selectableDates = object : SelectableDates {
                 override fun isSelectableDate(utcTimeMillis: Long) = DateTime(utcTimeMillis) <= DateTime.now()
                 override fun isSelectableYear(year: Int) = DateTime.now().year >= year

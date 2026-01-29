@@ -43,7 +43,7 @@ internal sealed interface Subtype {
 
         val all: List<Subtype> = Expense.entries + Income.entries
 
-        fun findByCode(code: String) = all.first { it.code == code }
+        fun List<Subtype>.findByCode(code: String) = find { it.code == code }
     }
 }
 

@@ -5,7 +5,8 @@ import project.e_buyankina.feature.finances.R
 
 internal enum class Type(
     @param:StringRes val text: Int,
+    val subtypes: List<Subtype>
 ) {
-    EXPENSE(R.string.expense),
-    INCOME(R.string.income)
+    EXPENSE(R.string.expense, Subtype.Expense.entries),
+    INCOME(R.string.income, Subtype.Income.entries)
 }

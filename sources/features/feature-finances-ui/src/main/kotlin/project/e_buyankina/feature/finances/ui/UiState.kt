@@ -14,6 +14,7 @@ internal data class UiState(
     data class UiOperation(
         val operationId: String,
         val amount: String,
+        val isAmountColorPositive: Boolean,
         val subtype: Subtype,
         val description: String?,
     )
