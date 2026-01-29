@@ -2,10 +2,10 @@ package project.e_buyankina.feature.operations.api.data.api
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.joda.time.DateTime
 import project.e_buyankina.common.network.serializers.BigDecimalSerializer
 import project.e_buyankina.common.network.serializers.DateSerializer
 import java.math.BigDecimal
-import java.time.LocalDate
 
 @Serializable
 internal class OperationApi(
@@ -22,7 +22,7 @@ internal class OperationApi(
 
     @Serializable(with = DateSerializer::class)
     @SerialName("date")
-    val date: LocalDate,
+    val date: DateTime,
 
     @SerialName("subtype")
     val subtype: String,

@@ -6,11 +6,13 @@ import project.e_buyankina.feature.finances.common.Type
 
 internal data class UiState(
     val selectedDate: String,
+    val selectedDateMillis: Long,
     val selectedType: Type,
     val selectedSubtype: Subtype,
     val types: List<Type>,
     val subtypes: List<Subtype>,
     val amount: String,
+    val details: String?,
     val keyboard: List<KeyBoardItem>,
 ) {
 

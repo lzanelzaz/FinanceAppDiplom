@@ -3,9 +3,9 @@ package project.e_buyankina.feature.operations.api.data.db
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import org.joda.time.DateTime
 import project.e_buyankina.feature.operations.api.domain.TransactionType
 import java.math.BigDecimal
-import java.time.LocalDate
 
 @Entity(tableName = "OperationDb")
 class OperationDb(
@@ -24,7 +24,7 @@ class OperationDb(
     val amount: BigDecimal,
 
     @ColumnInfo("date")
-    val date: LocalDate,
+    val date: DateTime,
 
     @ColumnInfo("subtype")
     val subtype: String,

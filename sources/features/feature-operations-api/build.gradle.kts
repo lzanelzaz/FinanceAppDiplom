@@ -32,6 +32,7 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.kotlinx.serialization)
     implementation(libs.koin)
+    implementation(libs.jodatime)
 
     implementation(libs.room.runtime)
     ksp(libs.room.compiler)

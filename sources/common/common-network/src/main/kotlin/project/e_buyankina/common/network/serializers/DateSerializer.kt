@@ -5,20 +5,18 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializer
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import org.joda.time.DateTime
 
 
 @OptIn(ExperimentalSerializationApi::class)
-@Serializer(forClass = LocalDate::class)
-object DateSerializer : KSerializer<LocalDate> {
-    private val formatter = DateTimeFormatter.ISO_LOCAL_DATE
+@Serializer(forClass = DateTime::class)
+object DateSerializer : KSerializer<DateTime> {
 
-    override fun serialize(encoder: Encoder, value: LocalDate) {
-        encoder.encodeString(value.format(formatter))
+    override fun serialize(encoder: Encoder, value: DateTime) {
+        encoder.encodeString(value.toString())
     }
 
-    override fun deserialize(decoder: Decoder): LocalDate {
-        return LocalDate.parse(decoder.decodeString(), formatter)
+    override fun deserialize(decoder: Decoder): DateTime {
+        return DateTime.parse(decoder.decodeString())
     }
 }

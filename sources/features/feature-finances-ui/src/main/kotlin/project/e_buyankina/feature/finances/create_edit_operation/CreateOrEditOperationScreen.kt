@@ -19,8 +19,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroupDefaults
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -29,22 +27,20 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.ToggleButtonDefaults
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -74,18 +70,22 @@ internal fun CreateOrEditOperationScreen(
 //                Text("Hide bottom sheet")
 //            }
     val viewModel = koinViewModel<CreateOrEditOperationViewModel>()
-    val context = LocalContext.current
     LaunchedEffect(Unit) {
         viewModel.load(operationId)
     }
+    val state = viewModel.uiState.collectAsState()
 
     CreateOrEditOperationContent(
         modifier = modifier,
-        state = initUi(),
-        showBottomSheetUpdate,
-        {},
-
-        )
+        state = state.value,
+        showBottomSheetUpdate = showBottomSheetUpdate,
+        onTypeChanged = viewModel::onTypeChanged,
+        onSubtypeChanged = viewModel::onSubtypeChanged,
+        onDateUpdated = viewModel::onDateChanged,
+        onKeyClicked = viewModel::onKeyClicked,
+        onSaveClick = viewModel::onSaveClick,
+        onDeleteClick = viewModel::onDeleteClick
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -94,8 +94,9 @@ private fun CreateOrEditOperationContent(
     modifier: Modifier = Modifier,
     state: UiState,
     showBottomSheetUpdate: (Boolean) -> Unit = {},
-    onStateChanged: State.() -> Unit = {},
-    onDateUpdated: (Long) -> Unit = {},
+    onTypeChanged: (Type) -> Unit = {},
+    onSubtypeChanged: (Subtype) -> Unit = {},
+    onDateUpdated: (Long?) -> Unit = {},
     onKeyClicked: (UiState.KeyBoardItem) -> Unit = {},
     onSaveClick: () -> Unit = {},
     onDeleteClick: () -> Unit = {},
@@ -103,6 +104,7 @@ private fun CreateOrEditOperationContent(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
+    var showDatePicker by remember { mutableStateOf(false) }
     ModalBottomSheet(
         onDismissRequest = { showBottomSheetUpdate(false) },
         sheetState = sheetState,
@@ -111,30 +113,25 @@ private fun CreateOrEditOperationContent(
         Column(
             modifier = modifier.padding(bottom = 8.dp),
         ) {
-            var selectedTypeIndex by remember { mutableIntStateOf(state.selectedType.ordinal) }
-            var selectedSubtypeIndex = remember { state.selectedSubtype.code }
-            var showDatePicker = remember { false }
+            var selectedType by remember { mutableStateOf(state.selectedType) }
+            var selectedSubtype by remember { mutableStateOf(state.selectedSubtype) }
             TypeBlock(
                 state = state,
-                isSelected = { selectedTypeIndex == it },
-                selectedChanged = { selectedTypeIndex = it },
+                isSelected = { selectedType == it },
+                selectedChanged = {
+                    selectedType = it
+                    onTypeChanged(it)
+                },
             )
             SubtypesBlock(
                 state = state,
-                isSelected = { selectedSubtypeIndex == it },
-                selectedChanged = { selectedSubtypeIndex = it },
+                isSelected = { selectedSubtype == it },
+                selectedChanged = { selectedSubtype = it },
             )
             DateAmountBlock(
                 state = state,
                 onShowDatePicker = { showDatePicker = true },
-                onDateUpdated = onDateUpdated,
             )
-            if (showDatePicker) {
-                DatePickerModal(
-                    onDateSelected = { },
-                    onDismiss = { showDatePicker = false }
-                )
-            }
             TextFieldsBlock(state)
             KeyboardBlock(state, onKeyClicked)
             ButtonsBlock(
@@ -142,14 +139,21 @@ private fun CreateOrEditOperationContent(
             )
         }
     }
+    if (showDatePicker) {
+        DatePickerModal(
+            state = state,
+            onDateSelected = onDateUpdated,
+            onDismiss = { showDatePicker = false }
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun TypeBlock(
     state: UiState,
-    isSelected: (Int) -> Boolean,
-    selectedChanged: (Int) -> Unit,
+    isSelected: (Type) -> Boolean,
+    selectedChanged: (Type) -> Unit,
 ) {
     Row(
         Modifier.padding(horizontal = 8.dp),
@@ -157,15 +161,15 @@ private fun TypeBlock(
     ) {
         state.types.forEachIndexed { index, type ->
             ToggleButton(
-                checked = isSelected(index),
-                onCheckedChange = { selectedChanged(index) },
+                checked = isSelected(type),
+                onCheckedChange = { selectedChanged(type) },
                 modifier = Modifier.weight(1f),
                 shapes = when (index) {
                     0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
                     else -> ButtonGroupDefaults.connectedTrailingButtonShapes()
                 },
             ) {
-                if (isSelected(index)) {
+                if (isSelected(type)) {
                     Icon(
                         painterResource(R.drawable.check_24dp),
                         contentDescription = null,
@@ -181,8 +185,8 @@ private fun TypeBlock(
 @Composable
 private fun SubtypesBlock(
     state: UiState,
-    isSelected: (String) -> Boolean,
-    selectedChanged: (String) -> Unit,
+    isSelected: (Subtype) -> Boolean,
+    selectedChanged: (Subtype) -> Unit,
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
@@ -198,7 +202,6 @@ private fun SubtypesBlock(
 private fun DateAmountBlock(
     state: UiState,
     onShowDatePicker: () -> Unit,
-    onDateUpdated: (Long) -> Unit,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically
@@ -298,8 +301,8 @@ private fun ButtonsBlock(
 @Composable
 private fun Subtype(
     item: Subtype,
-    isSelected: (String) -> Boolean,
-    selectedChanged: (String) -> Unit
+    isSelected: (Subtype) -> Boolean,
+    selectedChanged: (Subtype) -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -307,10 +310,10 @@ private fun Subtype(
     ) {
         Box(
             modifier = Modifier
-                .clickable(onClick = { selectedChanged(item.code) })
+                .clickable(onClick = { selectedChanged(item) })
                 .clip(CircleShape)
                 .background(
-                    if (isSelected(item.code)) {
+                    if (isSelected(item)) {
                         MaterialTheme.colorScheme.primaryContainer
                     } else {
                         MaterialTheme.colorScheme.outlineVariant
@@ -368,61 +371,34 @@ private fun Key(
     }
 }
 
-@Composable
-private fun DatePickerModal(
-    onDateSelected: (Long?) -> Unit,
-    onDismiss: () -> Unit
-) {
-    val datePickerState = rememberDatePickerState()
-
-    DatePickerDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(onClick = {
-                onDateSelected(datePickerState.selectedDateMillis)
-                onDismiss()
-            }) {
-                Text("OK")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")
-            }
-        }
-    ) {
-        DatePicker(state = datePickerState)
-    }
-}
-
-private fun initUi() = UiState(
-    selectedDate = "27.01.2026",
-    selectedType = Type.EXPENSE,
-    selectedSubtype = Subtype.Expense.ENTERTAINMENT,
-    types = Type.entries,
-    subtypes = Subtype.Expense.entries,
-    amount = "1 000 ₽",
-    keyboard = listOf(
-        UiState.KeyBoardItem.Digit(1),
-        UiState.KeyBoardItem.Digit(2),
-        UiState.KeyBoardItem.Digit(3),
-        UiState.KeyBoardItem.Digit(4),
-        UiState.KeyBoardItem.Digit(5),
-        UiState.KeyBoardItem.Digit(6),
-        UiState.KeyBoardItem.Digit(7),
-        UiState.KeyBoardItem.Digit(8),
-        UiState.KeyBoardItem.Digit(9),
-        UiState.KeyBoardItem.Point(","),
-        UiState.KeyBoardItem.Digit(0),
-        UiState.KeyBoardItem.Backspace(R.drawable.backspace_24dp),
-    ),
-)
-
-
 @DayNightPreviews
 @Composable
 private fun Preview() {
+    val initUi = UiState(
+        selectedDate = "27.01.2026",
+        selectedDateMillis = 0,
+        selectedType = Type.EXPENSE,
+        selectedSubtype = Subtype.Expense.ENTERTAINMENT,
+        types = Type.entries,
+        subtypes = Subtype.Expense.entries,
+        amount = "1 000 ₽",
+        details = null,
+        keyboard = listOf(
+            UiState.KeyBoardItem.Digit(1),
+            UiState.KeyBoardItem.Digit(2),
+            UiState.KeyBoardItem.Digit(3),
+            UiState.KeyBoardItem.Digit(4),
+            UiState.KeyBoardItem.Digit(5),
+            UiState.KeyBoardItem.Digit(6),
+            UiState.KeyBoardItem.Digit(7),
+            UiState.KeyBoardItem.Digit(8),
+            UiState.KeyBoardItem.Digit(9),
+            UiState.KeyBoardItem.Point(","),
+            UiState.KeyBoardItem.Digit(0),
+            UiState.KeyBoardItem.Backspace(R.drawable.backspace_24dp),
+        ),
+    )
     AppTheme {
-        CreateOrEditOperationContent(Modifier, initUi()) {}
+        CreateOrEditOperationContent(Modifier, initUi) {}
     }
 }

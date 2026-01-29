@@ -14,11 +14,13 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.joda.time.format.DateTimeFormat
 import project.e_buyankina.feature.auth.api.domain.usecases.GetCurrentUserUseCase
 import project.e_buyankina.feature.finances.common.Subtype
 import project.e_buyankina.feature.finances.ui.UiState.UiOperation
 import project.e_buyankina.feature.operations.api.domain.Operation
 import project.e_buyankina.feature.operations.api.domain.usecases.SubscribeToOperationsUseCase
+import java.util.Locale
 
 internal class FinancesViewModel(
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
@@ -49,10 +51,10 @@ internal class FinancesViewModel(
     }
 
     private fun mapToUi(state: State): UiState = with(state) {
+        val dateFormat = DateTimeFormat.forPattern("dd MMMM yyyy").withLocale(Locale("ru"))
         UiState(
             operationsGrouped = operations.groupBy { it.date }.map { (date, operations) ->
-                UiState.OperationsGrouped(date.toString(), operations.map { it.toUi() }
-                )
+                UiState.OperationsGrouped(date.toString(dateFormat), operations.map { it.toUi() })
             }
         )
     }

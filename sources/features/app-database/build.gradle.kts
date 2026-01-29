@@ -34,5 +34,6 @@ dependencies {
     implementation(project(":sources:features:feature-operations-api"))
 
     implementation(libs.room.runtime)
+    implementation(libs.jodatime)
     ksp(libs.room.compiler)
 }

@@ -44,6 +44,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.koin)
     implementation(libs.koin.compose)
+    implementation(libs.jodatime)
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)

@@ -7,5 +7,5 @@ internal enum class Type(
     @param:StringRes val text: Int,
 ) {
     EXPENSE(R.string.expense),
-    INCOME(R.string.income),
+    INCOME(R.string.income)
 }

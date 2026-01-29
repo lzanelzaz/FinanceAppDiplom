@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
 import project.e_buyankina.feature.auth.api.domain.usecases.GetCurrentUserUseCase
 import project.e_buyankina.feature.finances.R
 import project.e_buyankina.feature.finances.common.Subtype
@@ -18,7 +20,7 @@ import project.e_buyankina.feature.operations.api.domain.usecases.CreateOperatio
 import project.e_buyankina.feature.operations.api.domain.usecases.DeleteOperationUseCase
 import project.e_buyankina.feature.operations.api.domain.usecases.EditOperationUseCase
 import project.e_buyankina.feature.operations.api.domain.usecases.GetOperationUseCase
-import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 internal class CreateOrEditOperationViewModel(
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
@@ -44,13 +46,14 @@ internal class CreateOrEditOperationViewModel(
                 requireNotNull(operation)
                 val operationState = with(operation) {
                     State(
-                        selectedDate = date,
-                        amount = amount,
                         selectedType = when (type) {
                             TransactionType.EXPENSE -> Type.EXPENSE
                             TransactionType.INCOME -> Type.INCOME
                         },
-                        selectedSubtype = Subtype.findByCode(subtype)
+                        selectedSubtype = Subtype.findByCode(subtype),
+                        selectedDate = date,
+                        amount = amount,
+                        details = description,
                     )
                 }
                 initState = operationState
@@ -59,10 +62,34 @@ internal class CreateOrEditOperationViewModel(
         }
     }
 
+    fun onTypeChanged(newType: Type) {
+        state.update { it.copy(selectedType = newType) }
+    }
+
+    fun onSubtypeChanged(newSubtype: Subtype) {
+        state.update { it.copy(selectedSubtype = newSubtype) }
+    }
+
+    fun onDateChanged(millis: Long?) {
+        millis ?: return
+        state.update { it.copy(selectedDate = DateTime(millis)) }
+    }
+
+    fun onKeyClicked(key: UiState.KeyBoardItem) {
+
+    }
+
+    fun onSaveClick() {
+
+    }
+
+    fun onDeleteClick() {
+
+    }
+
     private fun mapToUi(state: State): UiState = with(state) {
+        val dateFormat = DateTimeFormat.forPattern("dd MMMM yyyy").withLocale(Locale("ru"))
         return@with UiState(
-            selectedDate = selectedDate.format(DateTimeFormatter.ISO_LOCAL_DATE),
-            amount = amount.toString(),
             selectedType = selectedType,
             selectedSubtype = selectedSubtype,
             types = Type.entries,
@@ -70,6 +97,10 @@ internal class CreateOrEditOperationViewModel(
                 Type.EXPENSE -> Subtype.Expense.entries
                 Type.INCOME -> Subtype.Income.entries
             },
+            selectedDate = selectedDate.toString(dateFormat),
+            selectedDateMillis = selectedDate.millis,
+            amount = amount.toString(),
+            details = details,
             keyboard = keyboard()
         )
     }

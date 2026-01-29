@@ -43,4 +43,5 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.serialization)
     implementation(libs.kotlinx.serialization)
+    implementation(libs.jodatime)
 }
