@@ -1,5 +1,6 @@
 package project.e_buyankina.feature.finances.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
@@ -81,20 +83,12 @@ internal fun FinancesContent(
             }
         }
     ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .consumeWindowInsets(paddingValues)
-        ) {
-            LazyColumn {
-                state.operationsGrouped.forEach { grouped ->
-                    stickyHeader { Date(grouped.date) }
-                    items(grouped.operations, { it.operationId }) {
-                        Operation(it) { operation ->
-                            clickedOperationId = operation.operationId
-                            showBottomSheet = true
-                        }
-                    }
-                }
+        if (state.operationsGrouped.isEmpty()) {
+            FinancesEmpty(Modifier.consumeWindowInsets(paddingValues))
+        } else {
+            FinancesOperations(Modifier.consumeWindowInsets(paddingValues), state) { operation ->
+                clickedOperationId = operation.operationId
+                showBottomSheet = true
             }
         }
     }
@@ -105,6 +99,46 @@ internal fun FinancesContent(
         }
     }
 }
+
+
+@Composable
+internal fun FinancesEmpty(modifier: Modifier = Modifier) {
+    Column(
+        modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Image(
+            painter = painterResource(R.drawable.cat_documents),
+            contentDescription = null
+        )
+        Text(
+            text = stringResource(R.string.empty),
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+    }
+}
+
+@Composable
+internal fun FinancesOperations(
+    modifier: Modifier = Modifier,
+    state: UiState,
+    onOperationClick: (UiOperation) -> Unit,
+) {
+    Box(modifier = modifier) {
+        LazyColumn {
+            state.operationsGrouped.forEach { grouped ->
+                stickyHeader { Date(grouped.date) }
+                items(grouped.operations, { it.operationId }) {
+                    Operation(it, onOperationClick)
+                }
+            }
+        }
+    }
+}
+
 
 @Composable
 private fun LazyItemScope.Date(
@@ -198,9 +232,19 @@ private fun PreviewOperation() {
         )
     )
     AppTheme {
-        FinancesContent(
+        FinancesOperations(
             Modifier,
             UiState(listOf(initState))
+        ) {}
+    }
+}
+
+@DayNightPreviews
+@Composable
+private fun PreviewEmpty() {
+    AppTheme {
+        FinancesEmpty(
+            Modifier,
         )
     }
 }
