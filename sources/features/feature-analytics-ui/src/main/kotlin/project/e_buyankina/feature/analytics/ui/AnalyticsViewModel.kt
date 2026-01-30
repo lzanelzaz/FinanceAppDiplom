@@ -14,10 +14,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
+import project.e_buyankina.feature.analytics.barchart.BarGroup
 import project.e_buyankina.feature.auth.api.domain.usecases.GetCurrentUserUseCase
 import project.e_buyankina.feature.operations.api.domain.TransactionType
 import project.e_buyankina.feature.operations.api.domain.usecases.SubscribeToOperationsUseCase
-import java.math.BigDecimal
 import java.util.Locale
 
 internal class AnalyticsViewModel(
@@ -62,10 +62,21 @@ internal class AnalyticsViewModel(
             selectedChartType = selectedChartType,
             dateRange = "${startDate.toString(dateFormat)} - ${endDate.toString(dateFormat)}",
             pieChartData = operations
+                .filter { it.date in startDate..endDate }
                 .filter { it.type == TransactionType.EXPENSE }
-                .groupingBy { it.subtype }
-                .aggregate { _, accumulator, operation, _ -> (accumulator ?: BigDecimal.ZERO) + operation.amount.abs() },
-            barChartData = emptyMap(),
+                .groupBy { it.subtype }
+                .mapValues { (_, operations) -> operations.sumOf { it.amount.abs() } },
+            barChartData = operations
+                .filter { it.date in startDate..endDate }
+                .groupBy { it.date.toString("MMM", Locale("ru")) }
+                .mapValues { (_, monthOperations) ->
+                    val incomeOperations = monthOperations.filter { it.type == TransactionType.INCOME }
+                    val expenseOperations = monthOperations.filter { it.type == TransactionType.EXPENSE }
+                    BarGroup(
+                        income = incomeOperations.sumOf { it.amount.abs() },
+                        expense = expenseOperations.sumOf { it.amount.abs() }
+                    )
+                },
         )
     }
 }

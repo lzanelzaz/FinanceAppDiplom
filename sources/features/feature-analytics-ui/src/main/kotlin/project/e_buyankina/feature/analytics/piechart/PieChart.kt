@@ -3,7 +3,6 @@ package project.e_buyankina.feature.analytics.piechart
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -86,21 +85,18 @@ private fun PieChartItems(
     data: List<PieChartEntry>,
     scrollState: ScrollState,
 ) {
-    FlowRow(
-        modifier = Modifier.verticalScroll(state = scrollState),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
+    FlowRow(modifier = Modifier.verticalScroll(state = scrollState)) {
         data.sortedByDescending { it.percent }.forEach { item ->
             val percent = item.percent.setScale(2).toString()
             val amount = item.amount.setScale(2).toString()
             val text = item.name
             Text(
                 modifier = Modifier
+                    .padding(4.dp)
                     .background(color = item.color.copy(alpha = 0.5f), shape = CircleShape)
                     .padding(8.dp),
                 text = "$percent% $text: $amount ₽",
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onBackground,
             )
         }
@@ -129,9 +125,9 @@ object PieChartDefaults {
         Color(0xFF2954A1),
     )
 
-    fun radius(): Dp = 80.dp
+    fun radius(): Dp = 60.dp
 
-    fun thickness(): Dp = 30.dp
+    fun thickness(): Dp = 20.dp
 }
 
 @DayNightPreviews

@@ -55,7 +55,7 @@ internal fun AnalyticsContent(
     onChartTypeChanged: (ChartType) -> Unit = {},
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
-    Column(modifier.padding(horizontal = 16.dp)) {
+    Column(modifier) {
         TypeBlock(
             state,
             isSelected = { state.selectedChartType == it },
@@ -64,7 +64,7 @@ internal fun AnalyticsContent(
         OutlinedButton(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp), onClick = { showDatePicker = true }) {
+                .padding(vertical = 8.dp, horizontal = 16.dp), onClick = { showDatePicker = true }) {
             Text(state.dateRange)
         }
         if (state.selectedChartType == ChartType.BY_CATEGORIES && state.pieChartData.isEmpty() ||
@@ -73,8 +73,16 @@ internal fun AnalyticsContent(
             EmptyScreen(modifier, R.drawable.cat_chart)
         } else {
             when (state.selectedChartType) {
-                ChartType.BY_CATEGORIES -> PieChart(chartData = state.pieChartData)
-                ChartType.BY_BALANCE -> BarChart(chartData = state.barChartData)
+                ChartType.BY_CATEGORIES -> PieChart(
+                    chartData = state.pieChartData,
+                    modifier = Modifier.fillMaxSize()
+                )
+                ChartType.BY_BALANCE -> BarChart(
+                    chartData = state.barChartData,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(8.dp)
+                )
             }
         }
     }
@@ -96,7 +104,7 @@ private fun TypeBlock(
     selectedChanged: (ChartType) -> Unit,
 ) {
     Row(
-        modifier = Modifier.padding(vertical = 8.dp),
+        modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)
     ) {
         state.chartTypes.forEachIndexed { index, type ->
