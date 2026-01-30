@@ -15,7 +15,9 @@ import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import project.e_buyankina.feature.auth.api.domain.usecases.GetCurrentUserUseCase
+import project.e_buyankina.feature.operations.api.domain.TransactionType
 import project.e_buyankina.feature.operations.api.domain.usecases.SubscribeToOperationsUseCase
+import java.math.BigDecimal
 import java.util.Locale
 
 internal class AnalyticsViewModel(
@@ -59,7 +61,10 @@ internal class AnalyticsViewModel(
             chartTypes = ChartType.entries,
             selectedChartType = selectedChartType,
             dateRange = "${startDate.toString(dateFormat)} - ${endDate.toString(dateFormat)}",
-            pieChartData = emptyMap(),
+            pieChartData = operations
+                .filter { it.type == TransactionType.EXPENSE }
+                .groupingBy { it.subtype }
+                .aggregate { _, accumulator, operation, _ -> (accumulator ?: BigDecimal.ZERO) + operation.amount.abs() },
             barChartData = emptyMap(),
         )
     }
