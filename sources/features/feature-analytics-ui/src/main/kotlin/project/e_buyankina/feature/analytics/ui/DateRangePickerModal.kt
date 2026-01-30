@@ -1,24 +1,22 @@
-package project.e_buyankina.feature.finances.create_edit_operation
+package project.e_buyankina.feature.analytics.ui
 
-import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.SelectableDates
+import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import org.joda.time.DateTime
 import project.e_buyankina.common.ui.R
 import java.util.Locale
 
 @Composable
-internal fun DatePickerModal(
-    state: UiState,
-    onDateSelected: (Long?) -> Unit,
+internal fun DateRangePickerModal(
+    state: State,
+    onDateRangeSelected: (Pair<Long?, Long?>) -> Unit,
     onDismiss: () -> Unit
 ) {
     val localizedConfiguration = LocalConfiguration.current.apply { setLocale(Locale("ru")) }
@@ -26,20 +24,21 @@ internal fun DatePickerModal(
         LocalConfiguration provides localizedConfiguration,
         LocalContext provides LocalContext.current.createConfigurationContext(localizedConfiguration)
     ) {
-        val datePickerState = rememberDatePickerState(
-            initialSelectedDateMillis = state.selectedDateMillis,
-            selectableDates = object : SelectableDates {
-                override fun isSelectableDate(utcTimeMillis: Long) = DateTime(utcTimeMillis) <= DateTime.now()
-                override fun isSelectableYear(year: Int) = DateTime.now().year >= year
-            }
+        val dateRangePickerState = rememberDateRangePickerState(
+            initialSelectedStartDateMillis = state.startDate.millis,
+            initialSelectedEndDateMillis = state.endDate.millis,
         )
         DatePickerDialog(
             onDismissRequest = onDismiss,
             confirmButton = {
-                TextButton(onClick = {
-                    onDateSelected(datePickerState.selectedDateMillis)
-                    onDismiss()
-                }) {
+                TextButton(
+                    onClick = {
+                        onDateRangeSelected(
+                            Pair(dateRangePickerState.selectedStartDateMillis, dateRangePickerState.selectedEndDateMillis)
+                        )
+                        onDismiss()
+                    }
+                ) {
                     Text(stringResource(R.string.ok))
                 }
             },
@@ -49,7 +48,10 @@ internal fun DatePickerModal(
                 }
             }
         ) {
-            DatePicker(state = datePickerState)
+            DateRangePicker(
+                state = dateRangePickerState,
+                showModeToggle = false,
+            )
         }
     }
 }
