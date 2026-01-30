@@ -69,6 +69,7 @@ dependencies {
     implementation(project(":sources:features:feature-splashscreen-ui"))
     implementation(project(":sources:features:feature-main-container-ui"))
     implementation(project(":sources:features:feature-finances-ui"))
+    implementation(project(":sources:features:feature-analytics-ui"))
     implementation(project(":sources:features:feature-profile-ui"))
     implementation(project(":sources:common:common-navigation"))
     implementation(libs.androidx.navigation.compose)
