@@ -1,6 +1,5 @@
 package project.e_buyankina.feature.finances.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,7 +27,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
@@ -37,6 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.koin.compose.viewmodel.koinViewModel
+import project.e_buyankina.common.ui.emptyscreen.EmptyScreen
 import project.e_buyankina.common.ui.preview.DayNightPreviews
 import project.e_buyankina.common.ui.theme.AppTheme
 import project.e_buyankina.common.ui.theme.moneyGreen
@@ -84,7 +83,7 @@ internal fun FinancesContent(
         }
     ) { paddingValues ->
         if (state.operationsGrouped.isEmpty()) {
-            FinancesEmpty(Modifier.consumeWindowInsets(paddingValues))
+            EmptyScreen(Modifier.consumeWindowInsets(paddingValues), R.drawable.cat_documents)
         } else {
             FinancesOperations(Modifier.consumeWindowInsets(paddingValues), state) { operation ->
                 clickedOperationId = operation.operationId
@@ -97,27 +96,6 @@ internal fun FinancesContent(
             clickedOperationId = null
             showBottomSheet = newValue
         }
-    }
-}
-
-
-@Composable
-internal fun FinancesEmpty(modifier: Modifier = Modifier) {
-    Column(
-        modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        Image(
-            painter = painterResource(R.drawable.cat_documents),
-            contentDescription = null
-        )
-        Text(
-            text = stringResource(R.string.empty),
-            style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground
-        )
     }
 }
 
@@ -243,8 +221,9 @@ private fun PreviewOperation() {
 @Composable
 private fun PreviewEmpty() {
     AppTheme {
-        FinancesEmpty(
+        EmptyScreen(
             Modifier,
+            R.drawable.cat_documents
         )
     }
 }
