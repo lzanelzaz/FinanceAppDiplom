@@ -1,19 +1,25 @@
 package project.e_buyankina.feature.finances.create_edit_operation
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import org.joda.time.DateTime
-import project.e_buyankina.common.ui.R
+import project.e_buyankina.feature.finances.R
 import java.util.Locale
+import project.e_buyankina.common.ui.R as CommonR
 
 @Composable
 internal fun DatePickerModal(
@@ -40,16 +46,23 @@ internal fun DatePickerModal(
                     onDateSelected(datePickerState.selectedDateMillis)
                     onDismiss()
                 }) {
-                    Text(stringResource(R.string.ok))
+                    Text(stringResource(CommonR.string.ok))
                 }
             },
             dismissButton = {
                 TextButton(onClick = onDismiss) {
-                    Text(stringResource(R.string.cancel))
+                    Text(stringResource(CommonR.string.cancel))
                 }
             }
         ) {
-            DatePicker(state = datePickerState)
+            DatePicker(state = datePickerState, title = {
+                Text(
+                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
+                    text = stringResource(R.string.select_date),
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Bold,
+                )
+            })
         }
     }
 }

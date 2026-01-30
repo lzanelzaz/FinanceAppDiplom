@@ -562,7 +562,7 @@ object BarChartDefaults {
 }
 
 @Composable
-fun GroupColumnBarChart(
+fun BarChart(
     modifier: Modifier = Modifier,
     chartData: Map<String, List<Float>>,
     groupBarChartConfig: GroupBarChartConfig = BarChartDefaults.groupBarChartConfig(),
@@ -811,7 +811,7 @@ private fun Preview() {
         "Q4" to listOf(60f, 90f)
     )
 
-    GroupColumnBarChart(
+    BarChart(
         modifier = Modifier
             .fillMaxWidth(),
         // The data for the group column bar chart, Map<String, List<Float>>

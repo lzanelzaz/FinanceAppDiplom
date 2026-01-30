@@ -1,0 +1,5 @@
+<resources>
+    <string name="balance">По балансу</string>
+    <string name="categories">По категориям</string>
+    <string name="select_date_range">Выберите интервал</string>
+</resources>

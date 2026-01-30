@@ -53,6 +53,7 @@ import project.e_buyankina.common.ui.theme.AppTheme
 import project.e_buyankina.feature.finances.R
 import project.e_buyankina.feature.finances.common.Subtype
 import project.e_buyankina.feature.finances.common.Type
+import project.e_buyankina.common.ui.R as CommonR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -164,7 +165,7 @@ private fun TypeBlock(
             ) {
                 if (isSelected(type)) {
                     Icon(
-                        painterResource(R.drawable.check_24dp),
+                        painterResource(CommonR.drawable.check_24dp),
                         contentDescription = null,
                     )
                     Spacer(Modifier.size(ToggleButtonDefaults.IconSpacing))

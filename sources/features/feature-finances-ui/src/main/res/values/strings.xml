@@ -17,4 +17,6 @@
     <string name="salary">Зарплата</string>
     <string name="interest">Проценты</string>
     <string name="transfers">Переводы</string>
+
+    <string name="select_date">Выберите дату</string>
 </resources>
