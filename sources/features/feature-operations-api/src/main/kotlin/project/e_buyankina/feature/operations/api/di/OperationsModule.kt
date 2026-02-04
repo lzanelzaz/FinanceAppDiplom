@@ -25,6 +25,10 @@ import project.e_buyankina.feature.operations.api.domain.usecases.EditOperationU
 import project.e_buyankina.feature.operations.api.domain.usecases.EditOperationUseCaseImpl
 import project.e_buyankina.feature.operations.api.domain.usecases.GetOperationUseCase
 import project.e_buyankina.feature.operations.api.domain.usecases.GetOperationUseCaseImpl
+import project.e_buyankina.feature.operations.api.domain.usecases.GetOperationsPageUseCase
+import project.e_buyankina.feature.operations.api.domain.usecases.GetOperationsPageUseCaseImpl
+import project.e_buyankina.feature.operations.api.domain.usecases.GetOperationsPeriodUseCase
+import project.e_buyankina.feature.operations.api.domain.usecases.GetOperationsPeriodUseCaseImpl
 import project.e_buyankina.feature.operations.api.domain.usecases.SubscribeToOperationsUseCase
 import project.e_buyankina.feature.operations.api.domain.usecases.SubscribeToOperationsUseCaseImpl
 
@@ -42,5 +46,7 @@ val operationsApiModule = module {
     singleOf(::DeleteOperationUseCaseImpl) { bind<DeleteOperationUseCase>() }
     singleOf(::EditOperationUseCaseImpl) { bind<EditOperationUseCase>() }
     singleOf(::GetOperationUseCaseImpl) { bind<GetOperationUseCase>() }
+    singleOf(::GetOperationsPageUseCaseImpl) { bind<GetOperationsPageUseCase>() }
+    singleOf(::GetOperationsPeriodUseCaseImpl) { bind<GetOperationsPeriodUseCase>() }
     singleOf(::SubscribeToOperationsUseCaseImpl) { bind<SubscribeToOperationsUseCase>() }
 }

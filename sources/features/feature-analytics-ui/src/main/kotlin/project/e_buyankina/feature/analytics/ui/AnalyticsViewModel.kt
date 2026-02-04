@@ -4,10 +4,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import org.joda.time.DateTime
@@ -18,12 +15,12 @@ import project.e_buyankina.common.error.safeLaunch
 import project.e_buyankina.feature.analytics.barchart.BarGroup
 import project.e_buyankina.feature.auth.api.domain.usecases.GetCurrentUserUseCase
 import project.e_buyankina.feature.operations.api.domain.TransactionType
-import project.e_buyankina.feature.operations.api.domain.usecases.SubscribeToOperationsUseCase
+import project.e_buyankina.feature.operations.api.domain.usecases.GetOperationsPeriodUseCase
 import java.util.Locale
 
 internal class AnalyticsViewModel(
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
-    private val subscribeToOperationsUseCase: SubscribeToOperationsUseCase,
+    private val getOperationsPeriodUseCase: GetOperationsPeriodUseCase,
     override val errorHandler: ErrorHandler,
 ) : BaseViewModel() {
 
@@ -38,20 +35,21 @@ internal class AnalyticsViewModel(
 
     fun onDateRangeSelected(range: Pair<Long?, Long?>) {
         state.update { it.copy(startDate = DateTime(range.first), endDate = DateTime(range.second)) }
+        loadOperations()
     }
 
-    fun onChartTypeChanged(type: ChartType) {
-        state.update { it.copy(selectedChartType = type) }
-    }
+    fun onChartTypeChanged(type: ChartType) = state.update { it.copy(selectedChartType = type) }
 
     private fun loadOperations() {
+        val startDate = state.value.startDate
+        val endDate = state.value.endDate
         safeLaunch {
             val accountId = getCurrentUserUseCase()?.accountId
             requireNotNull(accountId)
-            subscribeToOperationsUseCase(accountId)
-                .catch { emit(emptyList()) }
-                .onEach { operations -> state.update { it.copy(operations = operations) } }
-                .first()
+            val operations = getOperationsPeriodUseCase(accountId = accountId, startDate = startDate, endDate = endDate)
+            state.update {
+                it.copy(operations = operations)
+            }
         }
     }
 
@@ -64,12 +62,10 @@ internal class AnalyticsViewModel(
             selectedChartType = selectedChartType,
             dateRange = "${startDate.toString(dateFormat)} - ${endDate.toString(dateFormat)}",
             pieChartData = operations
-                .filter { it.date in startDate..endDate }
                 .filter { it.type == TransactionType.EXPENSE }
                 .groupBy { it.subtype }
                 .mapValues { (_, operations) -> operations.sumOf { it.amount.abs() } },
             barChartData = operations
-                .filter { it.date in startDate..endDate }
                 .groupBy { it.date.toString("MMM", Locale("ru")) }
                 .mapValues { (_, monthOperations) ->
                     val incomeOperations = monthOperations.filter { it.type == TransactionType.INCOME }

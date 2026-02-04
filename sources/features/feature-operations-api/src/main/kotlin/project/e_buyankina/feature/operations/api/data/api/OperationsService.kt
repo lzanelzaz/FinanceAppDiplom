@@ -1,5 +1,6 @@
 package project.e_buyankina.feature.operations.api.data.api
 
+import org.joda.time.DateTime
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -30,5 +31,13 @@ internal interface OperationsService {
     @GET("operations")
     suspend fun getOperations(
         @Query("account_id") accountId: String,
+        @Query("page") page: Int,
+    ): Response<PageOperationsApi>
+
+    @GET("operations")
+    suspend fun getOperations(
+        @Query("account_id") accountId: String,
+        @Query("start_date") startDate: DateTime,
+        @Query("end_date") endDate: DateTime,
     ): Response<List<OperationApi>>
 }

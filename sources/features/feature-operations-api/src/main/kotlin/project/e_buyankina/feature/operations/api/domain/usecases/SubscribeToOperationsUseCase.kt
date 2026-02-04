@@ -16,6 +16,6 @@ internal class SubscribeToOperationsUseCaseImpl(
 ) : SubscribeToOperationsUseCase {
 
     override fun invoke(accountId: String): Flow<List<Operation>> {
-        return repository.getOperations(accountId)
+        return repository.subscribeToOperations(accountId)
     }
 }

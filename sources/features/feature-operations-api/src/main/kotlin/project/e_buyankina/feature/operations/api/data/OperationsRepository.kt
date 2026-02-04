@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import org.joda.time.DateTime
 import project.e_buyankina.common.network.retrofitErrorHandler
 import project.e_buyankina.feature.operations.api.data.api.OperationsService
 import project.e_buyankina.feature.operations.api.data.db.OperationDb
@@ -14,6 +15,7 @@ import project.e_buyankina.feature.operations.api.data.mappers.OperationDbToDoma
 import project.e_buyankina.feature.operations.api.data.mappers.OperationDomainToApiMapper
 import project.e_buyankina.feature.operations.api.domain.NewOperation
 import project.e_buyankina.feature.operations.api.domain.Operation
+import project.e_buyankina.feature.operations.api.domain.PageOperations
 
 internal interface OperationsRepository {
 
@@ -38,9 +40,22 @@ internal interface OperationsRepository {
         operationId: String,
     ): Operation?
 
-    fun getOperations(
+    fun subscribeToOperations(
         accountId: String,
     ): Flow<List<Operation>>
+
+
+    suspend fun getOperationsPage(
+        accountId: String,
+        page: Int,
+    ): PageOperations
+
+    suspend fun getOperationsPeriod(
+        accountId: String,
+        startDate: DateTime,
+        endDate: DateTime,
+    ): List<Operation>
+
 }
 
 internal class OperationsRepositoryImpl(
@@ -86,12 +101,31 @@ internal class OperationsRepositoryImpl(
         return db?.let { operationDbToDomainMapper(it) }
     }
 
-    override fun getOperations(accountId: String): Flow<List<Operation>> = flow {
+    override fun subscribeToOperations(accountId: String): Flow<List<Operation>> = flow {
         emit(dao.getAll().sortedByDescending(OperationDb::date).map(operationDbToDomainMapper))
         dao.deleteAll()
-        val api = retrofitErrorHandler(service.getOperations(accountId))
+        emitAll(dao.observe().map { it.sortedByDescending(OperationDb::date).map(operationDbToDomainMapper) })
+    }
+
+    override suspend fun getOperationsPage(accountId: String, page: Int): PageOperations {
+        val api = retrofitErrorHandler(service.getOperations(accountId, page))
+        val db = api.operations.map { operationApiToDbMapper(accountId, it) }
+        dao.insertAll(db)
+        return PageOperations(
+            page = api.page,
+            operations = db.map { operationDbToDomainMapper(it) },
+            hasNext = api.hasNext,
+        )
+    }
+
+    override suspend fun getOperationsPeriod(
+        accountId: String,
+        startDate: DateTime,
+        endDate: DateTime
+    ): List<Operation> {
+        val api = retrofitErrorHandler(service.getOperations(accountId, startDate, endDate))
         val db = api.map { operationApiToDbMapper(accountId, it) }
         dao.insertAll(db)
-        emitAll(dao.observe().map { it.sortedByDescending(OperationDb::date).map(operationDbToDomainMapper) })
+        return db.map { operationDbToDomainMapper(it) }
     }
 }
