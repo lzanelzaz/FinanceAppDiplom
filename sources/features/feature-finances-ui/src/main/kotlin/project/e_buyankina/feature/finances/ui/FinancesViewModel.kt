@@ -1,6 +1,5 @@
 package project.e_buyankina.feature.finances.ui
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -11,9 +10,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import org.joda.time.format.DateTimeFormat
+import project.e_buyankina.common.error.BaseViewModel
 import project.e_buyankina.common.error.ErrorHandler
+import project.e_buyankina.common.error.safeLaunch
 import project.e_buyankina.feature.auth.api.domain.usecases.GetCurrentUserUseCase
 import project.e_buyankina.feature.finances.common.Subtype
 import project.e_buyankina.feature.finances.common.Subtype.Companion.findByCode
@@ -25,8 +25,8 @@ import java.util.Locale
 internal class FinancesViewModel(
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
     private val subscribeToOperationsUseCase: SubscribeToOperationsUseCase,
-    private val errorHandler: ErrorHandler,
-) : ViewModel() {
+    override val errorHandler: ErrorHandler,
+) : BaseViewModel() {
 
     private val state = MutableStateFlow(State())
     val uiState: StateFlow<UiState> = state
@@ -38,7 +38,7 @@ internal class FinancesViewModel(
     }
 
     private fun observeOperations() {
-        viewModelScope.launch {
+        safeLaunch {
             val accountId = getCurrentUserUseCase()?.accountId
             requireNotNull(accountId)
             subscribeToOperationsUseCase(accountId)

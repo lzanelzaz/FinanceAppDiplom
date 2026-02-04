@@ -14,6 +14,8 @@ internal data class UiState(
     val amount: String,
     val details: String?,
     val keyboard: List<KeyBoardItem>,
+    val isSaveLoading: Boolean,
+    val isDeleteLoading: Boolean,
 ) {
 
     sealed interface KeyBoardItem {

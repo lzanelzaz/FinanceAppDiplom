@@ -128,9 +128,7 @@ private fun CreateOrEditOperationContent(
             )
             TextFieldsBlock(state, onDetailsChanged)
             KeyboardBlock(state, onKeyClicked)
-            ButtonsBlock(
-                onSaveClick = onSaveClick, onDeleteClick = onDeleteClick
-            )
+            ButtonsBlock(state, onSaveClick = onSaveClick, onDeleteClick = onDeleteClick)
         }
     }
     if (showDatePicker) {
@@ -202,7 +200,11 @@ private fun DateAmountBlock(
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
-        OutlinedButton(onShowDatePicker, modifier = Modifier.padding(horizontal = 12.dp)) {
+        OutlinedButton(
+            onShowDatePicker,
+            modifier = Modifier.padding(horizontal = 12.dp),
+            enabled = !state.isDeleteLoading && !state.isSaveLoading,
+        ) {
             Text(state.selectedDate)
         }
         Box(
@@ -229,7 +231,7 @@ private fun TextFieldsBlock(
     OutlinedTextField(
         value = state.details.orEmpty(),
         onValueChange = onDetailsChanged,
-        enabled = true,
+        enabled = !state.isDeleteLoading && !state.isSaveLoading,
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp),
@@ -257,6 +259,7 @@ private fun KeyboardBlock(
 
 @Composable
 private fun ButtonsBlock(
+    state: UiState,
     onSaveClick: () -> Unit,
     onDeleteClick: () -> Unit,
 ) {
@@ -268,7 +271,7 @@ private fun ButtonsBlock(
     ) {
         LoadingButton(
             onSaveClick,
-            isLoading = false,
+            isLoading = state.isSaveLoading,
             modifier = Modifier.width(220.dp)
         ) {
             Text(
@@ -279,7 +282,7 @@ private fun ButtonsBlock(
         }
         LoadingButton(
             onDeleteClick,
-            isLoading = false,
+            isLoading = state.isDeleteLoading,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.error,
                 contentColor = MaterialTheme.colorScheme.onError,
@@ -396,6 +399,8 @@ private fun Preview() {
             UiState.KeyBoardItem.Digit(0),
             UiState.KeyBoardItem.Backspace(R.drawable.backspace_24dp),
         ),
+        isSaveLoading = false,
+        isDeleteLoading = false,
     )
     AppTheme {
         CreateOrEditOperationContent(Modifier, initUi) {}

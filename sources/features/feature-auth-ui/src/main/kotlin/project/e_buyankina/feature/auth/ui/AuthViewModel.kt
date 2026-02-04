@@ -1,6 +1,5 @@
 package project.e_buyankina.feature.auth.ui
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,8 +9,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
+import project.e_buyankina.common.error.BaseViewModel
 import project.e_buyankina.common.error.ErrorHandler
+import project.e_buyankina.common.error.safeLaunch
 import project.e_buyankina.common.navigation.features.MainNavigation
 import project.e_buyankina.feature.auth.R
 import project.e_buyankina.feature.auth.api.domain.usecases.AuthorizeUseCase
@@ -21,8 +21,8 @@ internal class AuthViewModel(
     private val createUserUseCase: CreateUserUseCase,
     private val authorizeUseCase: AuthorizeUseCase,
     private val mainNavigation: MainNavigation,
-    private val errorHandler: ErrorHandler,
-) : ViewModel() {
+    override val errorHandler: ErrorHandler,
+) : BaseViewModel() {
 
     private val state = MutableStateFlow(State())
     val uiState: StateFlow<UiState> = state
@@ -33,27 +33,19 @@ internal class AuthViewModel(
     val news = newsChannel.receiveAsFlow()
 
     fun onEmailTextUpdated(text: String) {
-        state.update {
-            it.copy(emailText = text, isEmailError = false)
-        }
+        state.update { it.copy(emailText = text, isEmailError = false) }
     }
 
     fun onPasswordTextUpdated(text: String) {
-        state.update {
-            it.copy(passwordText = text, isPasswordError = false)
-        }
+        state.update { it.copy(passwordText = text, isPasswordError = false) }
     }
 
     fun onNameTextUpdated(text: String) {
-        state.update {
-            it.copy(nameText = text, isNameError = false)
-        }
+        state.update { it.copy(nameText = text, isNameError = false) }
     }
 
     fun onPasswordIconClick() {
-        state.update {
-            it.copy(isPasswordMasked = !it.isPasswordMasked)
-        }
+        state.update { it.copy(isPasswordMasked = !it.isPasswordMasked) }
     }
 
     fun onPrimaryButtonClick() = with(state.value) {
@@ -78,28 +70,13 @@ internal class AuthViewModel(
     }
 
     private fun enterUser() = with(state.value) {
-        viewModelScope.launch {
-            runCatching {
-                if (isHasAccount) {
-                    authorizeUseCase(
-                        login = emailText,
-                        password = passwordText,
-                    )
-                } else {
-                    createUserUseCase(
-                        login = emailText,
-                        password = passwordText,
-                        username = nameText,
-                    )
-                }
-            }.onSuccess {
-                newsChannel.send(News.OpenRoute(mainNavigation.mainRoute))
-            }.onFailure { error ->
-                errorHandler.handleError(error)
-                state.update {
-                    it.copy(isLoading = false)
-                }
+        safeLaunch(onError = { state.update { it.copy(isLoading = false) } }) {
+            if (isHasAccount) {
+                authorizeUseCase(login = emailText, password = passwordText)
+            } else {
+                createUserUseCase(login = emailText, password = passwordText, username = nameText)
             }
+            newsChannel.send(News.OpenRoute(mainNavigation.mainRoute))
         }
     }
 

@@ -1,6 +1,5 @@
 package project.e_buyankina.feature.finances.create_edit_operation
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,9 +9,11 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
+import project.e_buyankina.common.error.BaseViewModel
+import project.e_buyankina.common.error.ErrorHandler
+import project.e_buyankina.common.error.safeLaunch
 import project.e_buyankina.feature.auth.api.domain.usecases.GetCurrentUserUseCase
 import project.e_buyankina.feature.finances.R
 import project.e_buyankina.feature.finances.common.Subtype
@@ -34,7 +35,8 @@ internal class CreateOrEditOperationViewModel(
     private val createOperationUseCase: CreateOperationUseCase,
     private val editOperationUseCase: EditOperationUseCase,
     private val deleteOperationUseCase: DeleteOperationUseCase,
-) : ViewModel() {
+    override val errorHandler: ErrorHandler,
+) : BaseViewModel() {
 
     private var initState: State? = null
 
@@ -47,7 +49,7 @@ internal class CreateOrEditOperationViewModel(
     val news = newsChannel.receiveAsFlow()
 
     fun load(operationId: String?) {
-        viewModelScope.launch {
+        safeLaunch {
             val accountId = getCurrentUserUseCase()?.accountId
             requireNotNull(accountId)
             val loadedState = if (operationId != null) {
@@ -106,7 +108,8 @@ internal class CreateOrEditOperationViewModel(
     }
 
     fun onSaveClick() {
-        viewModelScope.launch {
+        safeLaunch(onError = { state.update { it.copy(isSaveLoading = false) } }) {
+            state.update { it.copy(isSaveLoading = true) }
             val state = state.value
             if (initState == null) {
                 val newOperation = NewOperation(
@@ -145,7 +148,8 @@ internal class CreateOrEditOperationViewModel(
     }
 
     fun onDeleteClick() {
-        viewModelScope.launch {
+        safeLaunch(onError = { state.update { it.copy(isDeleteLoading = false) } }) {
+            state.update { it.copy(isDeleteLoading = true) }
             if (initState != null) {
                 val state = state.value
                 deleteOperationUseCase(
@@ -168,7 +172,9 @@ internal class CreateOrEditOperationViewModel(
             selectedDateMillis = selectedDate.millis,
             amount = "$amount ₽",
             details = details,
-            keyboard = keyboard()
+            keyboard = keyboard(),
+            isSaveLoading = isSaveLoading,
+            isDeleteLoading = isDeleteLoading,
         )
     }
 

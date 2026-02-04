@@ -13,4 +13,6 @@ internal data class State(
     val selectedType: Type = Type.EXPENSE,
     val selectedSubtype: Subtype = Subtype.Expense.entries.first(),
     val details: String? = null,
+    val isSaveLoading: Boolean = false,
+    val isDeleteLoading: Boolean = false,
 )
