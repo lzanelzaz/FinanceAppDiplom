@@ -34,7 +34,7 @@ import project.e_buyankina.feature.analytics.R
 import java.math.BigDecimal
 
 @Composable
-fun BarChart(
+internal fun BarChart(
     chartData: Map<String, BarGroup>,
     modifier: Modifier = Modifier,
     incomeColor: Color = BarChartDefaults.incomeColor(),

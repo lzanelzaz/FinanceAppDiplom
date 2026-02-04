@@ -71,6 +71,7 @@ dependencies {
     implementation(project(":sources:features:feature-finances-ui"))
     implementation(project(":sources:features:feature-analytics-ui"))
     implementation(project(":sources:features:feature-profile-ui"))
+    implementation(project(":sources:common:common-error"))
     implementation(project(":sources:common:common-navigation"))
     implementation(libs.androidx.navigation.compose)
 

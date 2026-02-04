@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
+import project.e_buyankina.common.error.ErrorHandler
 import project.e_buyankina.feature.analytics.barchart.BarGroup
 import project.e_buyankina.feature.auth.api.domain.usecases.GetCurrentUserUseCase
 import project.e_buyankina.feature.operations.api.domain.TransactionType
@@ -23,6 +24,7 @@ import java.util.Locale
 internal class AnalyticsViewModel(
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
     private val subscribeToOperationsUseCase: SubscribeToOperationsUseCase,
+    private val errorHandler: ErrorHandler,
 ) : ViewModel() {
 
     private val state = MutableStateFlow(State())

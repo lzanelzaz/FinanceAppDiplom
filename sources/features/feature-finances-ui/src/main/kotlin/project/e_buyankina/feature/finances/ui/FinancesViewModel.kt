@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.joda.time.format.DateTimeFormat
+import project.e_buyankina.common.error.ErrorHandler
 import project.e_buyankina.feature.auth.api.domain.usecases.GetCurrentUserUseCase
 import project.e_buyankina.feature.finances.common.Subtype
 import project.e_buyankina.feature.finances.common.Subtype.Companion.findByCode
@@ -24,6 +25,7 @@ import java.util.Locale
 internal class FinancesViewModel(
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
     private val subscribeToOperationsUseCase: SubscribeToOperationsUseCase,
+    private val errorHandler: ErrorHandler,
 ) : ViewModel() {
 
     private val state = MutableStateFlow(State())

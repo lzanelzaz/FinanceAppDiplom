@@ -7,8 +7,10 @@ plugins {
 }
 
 android {
-    namespace = "project.e_buyankina.feature.auth"
-    compileSdk = 36
+    namespace = "project.e_buyankina.common.error"
+    compileSdk {
+        version = release(36)
+    }
 
     defaultConfig {
         minSdk = 29
@@ -35,15 +37,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
-    implementation(libs.retrofit)
-    implementation(libs.kotlinx.serialization)
-
-    implementation(project(":sources:common:common-ui"))
     implementation(project(":sources:common:common-network"))
-    implementation(project(":sources:common:common-navigation"))
-    implementation(project(":sources:common:common-error"))
-    implementation(libs.androidx.navigation.compose)
-    implementation(project(":sources:features:feature-auth-api"))
     implementation(libs.koin)
     implementation(libs.koin.compose)
 }

@@ -1,6 +1,5 @@
 package project.e_buyankina.feature.auth.ui
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -49,10 +48,6 @@ internal fun AuthScreen(
     LaunchedEffect(Unit) {
         viewModel.news.collectLatest { news ->
             when (news) {
-                is News.ShowToast -> {
-                    val text = news.text ?: context.getString(R.string.smth_error)
-                    Toast.makeText(context, text, Toast.LENGTH_LONG).show()
-                }
                 is News.OpenRoute -> appNavController.navigate(news.route)
             }
         }

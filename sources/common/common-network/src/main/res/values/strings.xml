@@ -1,0 +1,4 @@
+<resources>
+    <string name="no_connection">Нет соединения с интернетом</string>
+    <string name="unknown_error">Что-то пошло не так</string>
+</resources>

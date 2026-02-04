@@ -49,6 +49,7 @@ dependencies {
     implementation(project(":sources:features:feature-auth-ui"))
     implementation(project(":sources:common:common-ui"))
     implementation(project(":sources:common:common-navigation"))
+    implementation(project(":sources:common:common-error"))
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)

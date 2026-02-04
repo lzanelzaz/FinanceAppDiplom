@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import project.e_buyankina.common.error.ErrorHandler
 import project.e_buyankina.common.navigation.features.AuthNavigation
 import project.e_buyankina.feature.auth.api.domain.usecases.ClearProfileInfoUseCase
 import project.e_buyankina.feature.auth.api.domain.usecases.GetCurrentUserUseCase
@@ -18,6 +19,7 @@ internal class ProfileViewModel(
     private val clearProfileInfoUseCase: ClearProfileInfoUseCase,
     private val clearOperationsUseCase: ClearOperationsUseCase,
     private val authNavigation: AuthNavigation,
+    private val errorHandler: ErrorHandler,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(State())

@@ -30,7 +30,7 @@ import project.e_buyankina.feature.analytics.R
 import java.math.BigDecimal
 
 @Composable
-fun PieChart(
+internal fun PieChart(
     chartData: Map<String, BigDecimal>,
     modifier: Modifier = Modifier,
     defaultColorList: List<Color> = PieChartDefaults.defaultColorList(),

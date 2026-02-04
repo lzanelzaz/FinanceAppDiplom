@@ -6,6 +6,7 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import project.e_buyankina.app.database.appDatabaseModule
+import project.e_buyankina.common.error.di.errorModule
 import project.e_buyankina.feature.analytics.di.analyticsModule
 import project.e_buyankina.feature.auth.api.di.authApiModule
 import project.e_buyankina.feature.auth.di.authUiModule
@@ -31,6 +32,7 @@ class FinanceApp : Application() {
 val koinModules = module {
     includes(
         appDatabaseModule,
+        errorModule,
         splashModule,
         authApiModule,
         authUiModule,
