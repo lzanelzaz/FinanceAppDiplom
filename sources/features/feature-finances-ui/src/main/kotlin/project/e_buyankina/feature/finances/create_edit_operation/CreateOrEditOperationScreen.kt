@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -120,7 +121,7 @@ private fun CreateOrEditOperationContent(
             SubtypesBlock(
                 state = state,
                 isSelected = { state.selectedSubtype == it },
-                selectedChanged = onSubtypeChanged,
+                selectedChanged = { if (state.isEnabled) onSubtypeChanged(it) },
             )
             DateAmountBlock(
                 state = state,
@@ -160,6 +161,7 @@ private fun TypeBlock(
                     0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
                     else -> ButtonGroupDefaults.connectedTrailingButtonShapes()
                 },
+                enabled = state.isEnabled,
             ) {
                 if (isSelected(type)) {
                     Icon(
@@ -203,7 +205,7 @@ private fun DateAmountBlock(
         OutlinedButton(
             onShowDatePicker,
             modifier = Modifier.padding(horizontal = 12.dp),
-            enabled = !state.isDeleteLoading && !state.isSaveLoading,
+            enabled = state.isEnabled,
         ) {
             Text(state.selectedDate)
         }
@@ -231,7 +233,7 @@ private fun TextFieldsBlock(
     OutlinedTextField(
         value = state.details.orEmpty(),
         onValueChange = onDetailsChanged,
-        enabled = !state.isDeleteLoading && !state.isSaveLoading,
+        enabled = state.isEnabled,
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp),
@@ -272,7 +274,9 @@ private fun ButtonsBlock(
         LoadingButton(
             onSaveClick,
             isLoading = state.isSaveLoading,
-            modifier = Modifier.width(220.dp)
+            modifier = Modifier
+                .width(220.dp)
+                .height(52.dp)
         ) {
             Text(
                 modifier = Modifier.padding(vertical = 4.dp),
@@ -282,6 +286,7 @@ private fun ButtonsBlock(
         }
         LoadingButton(
             onDeleteClick,
+            modifier = Modifier.height(52.dp),
             isLoading = state.isDeleteLoading,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.error,
@@ -401,6 +406,41 @@ private fun Preview() {
         ),
         isSaveLoading = false,
         isDeleteLoading = false,
+    )
+    AppTheme {
+        CreateOrEditOperationContent(Modifier, initUi) {}
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@DayNightPreviews
+@Composable
+private fun PreviewLoading() {
+    val initUi = UiState(
+        selectedDate = "27.01.2026",
+        selectedDateMillis = 0,
+        selectedType = Type.EXPENSE,
+        selectedSubtype = Subtype.Expense.ENTERTAINMENT,
+        types = Type.entries,
+        subtypes = Subtype.Expense.entries,
+        amount = "1 000 ₽",
+        details = null,
+        keyboard = listOf(
+            UiState.KeyBoardItem.Digit(1),
+            UiState.KeyBoardItem.Digit(2),
+            UiState.KeyBoardItem.Digit(3),
+            UiState.KeyBoardItem.Digit(4),
+            UiState.KeyBoardItem.Digit(5),
+            UiState.KeyBoardItem.Digit(6),
+            UiState.KeyBoardItem.Digit(7),
+            UiState.KeyBoardItem.Digit(8),
+            UiState.KeyBoardItem.Digit(9),
+            UiState.KeyBoardItem.Point(","),
+            UiState.KeyBoardItem.Digit(0),
+            UiState.KeyBoardItem.Backspace(R.drawable.backspace_24dp),
+        ),
+        isSaveLoading = true,
+        isDeleteLoading = true,
     )
     AppTheme {
         CreateOrEditOperationContent(Modifier, initUi) {}
