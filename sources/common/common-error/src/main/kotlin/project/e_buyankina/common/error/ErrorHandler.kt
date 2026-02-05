@@ -30,7 +30,7 @@ internal class ErrorHandlerImpl : ErrorHandler, NotificationManager {
 
     override suspend fun handleError(throwable: Throwable) {
         val message = parseErrorMessage(throwable)
-        Log.e("ErrorHandler", throwable.message.toString())
+        Log.e("ErrorHandler", throwable.toString())
         _notifications.emit(Notification.Error(message))
     }
 

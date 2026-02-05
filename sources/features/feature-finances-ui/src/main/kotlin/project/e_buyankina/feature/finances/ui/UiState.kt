@@ -4,6 +4,7 @@ import project.e_buyankina.feature.finances.common.Subtype
 
 internal data class UiState(
     val operationsGrouped: List<OperationsGrouped>,
+    val totalOperationsCount: Int,
     val isLoading: Boolean,
 ) {
 

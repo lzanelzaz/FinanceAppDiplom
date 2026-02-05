@@ -36,7 +36,6 @@ internal class FinancesViewModel(
 
     init {
         observeOperations()
-        loadNextPage()
     }
 
     private fun observeOperations() {
@@ -47,11 +46,12 @@ internal class FinancesViewModel(
             subscribeToOperationsUseCase(accountId)
                 .onEach { operations -> state.update { it.copy(operations = operations) } }
                 .launchIn(this)
+            loadNextPage()
         }
     }
 
     fun loadNextPage() {
-        if (!state.value.hasNext) return
+        if (!state.value.hasNext || state.value.isLoading) return
         val page = state.value.page
         safeLaunch {
             val accountId = state.value.accountId
@@ -69,6 +69,7 @@ internal class FinancesViewModel(
                 UiState.OperationsGrouped(date.toString(dateFormat), operations.map { it.toUi() })
             },
             isLoading = isLoading,
+            totalOperationsCount = operations.size + operations.groupBy { it.date }.keys.size,
         )
     }
 
