@@ -12,21 +12,27 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
@@ -55,6 +61,7 @@ internal fun FinancesScreen(
     FinancesContent(
         modifier.fillMaxSize(),
         state.value,
+        viewModel::loadNextPage,
     )
 }
 
@@ -62,6 +69,7 @@ internal fun FinancesScreen(
 internal fun FinancesContent(
     modifier: Modifier = Modifier,
     state: UiState,
+    onLoadNextPage: () -> Unit,
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
     var clickedOperationId: String? by remember { mutableStateOf(null) }
@@ -85,10 +93,14 @@ internal fun FinancesContent(
         if (state.operationsGrouped.isEmpty()) {
             EmptyScreen(Modifier.consumeWindowInsets(paddingValues), R.drawable.cat_documents)
         } else {
-            FinancesOperations(Modifier.consumeWindowInsets(paddingValues), state) { operation ->
-                clickedOperationId = operation.operationId
-                showBottomSheet = true
-            }
+            FinancesOperations(
+                Modifier.consumeWindowInsets(paddingValues), state,
+                onOperationClick = { operation ->
+                    clickedOperationId = operation.operationId
+                    showBottomSheet = true
+                },
+                onLoadNextPage = onLoadNextPage,
+            )
         }
     }
     if (showBottomSheet) {
@@ -104,13 +116,33 @@ internal fun FinancesOperations(
     modifier: Modifier = Modifier,
     state: UiState,
     onOperationClick: (UiOperation) -> Unit,
+    onLoadNextPage: () -> Unit,
 ) {
     Box(modifier = modifier) {
+        val lazyListState = rememberLazyListState()
+        LaunchedEffect(lazyListState) {
+            snapshotFlow { lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
+                .collect { lastVisibleIndex ->
+                    if (lastVisibleIndex != null && lastVisibleIndex >= state.operationsGrouped.size - 3) {
+                        onLoadNextPage()
+                    }
+                }
+        }
         LazyColumn {
             state.operationsGrouped.forEach { grouped ->
                 stickyHeader { Date(grouped.date) }
                 items(grouped.operations, { it.operationId }) {
                     Operation(it, onOperationClick)
+                }
+            }
+            if (state.isLoading) {
+                item {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .wrapContentWidth(Alignment.CenterHorizontally)
+                    )
                 }
             }
         }
@@ -212,8 +244,34 @@ private fun PreviewOperation() {
     AppTheme {
         FinancesOperations(
             Modifier,
-            UiState(listOf(initState))
-        ) {}
+            UiState(listOf(initState), false),
+            {},
+            {}
+        )
+    }
+}
+
+@DayNightPreviews
+@Composable
+private fun PreviewOperationsLoading() {
+    val initState = UiState.OperationsGrouped(
+        "11.11.2025",
+        listOf(
+            UiOperation(
+                operationId = "",
+                amount = "+1 000 000 ₽",
+                subtype = Subtype.Expense.ENTERTAINMENT,
+                description = "Описание wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww",
+                isAmountColorPositive = true,
+            )
+        )
+    )
+    AppTheme {
+        FinancesContent(
+            Modifier,
+            UiState(listOf(initState), true),
+            {}
+        )
     }
 }
 

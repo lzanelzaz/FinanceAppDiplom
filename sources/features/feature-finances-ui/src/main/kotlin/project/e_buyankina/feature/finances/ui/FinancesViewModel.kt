@@ -4,7 +4,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -19,12 +18,14 @@ import project.e_buyankina.feature.finances.common.Subtype
 import project.e_buyankina.feature.finances.common.Subtype.Companion.findByCode
 import project.e_buyankina.feature.finances.ui.UiState.UiOperation
 import project.e_buyankina.feature.operations.api.domain.Operation
+import project.e_buyankina.feature.operations.api.domain.usecases.GetOperationsPageUseCase
 import project.e_buyankina.feature.operations.api.domain.usecases.SubscribeToOperationsUseCase
 import java.util.Locale
 
 internal class FinancesViewModel(
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
     private val subscribeToOperationsUseCase: SubscribeToOperationsUseCase,
+    private val getOperationsPageUseCase: GetOperationsPageUseCase,
     override val errorHandler: ErrorHandler,
 ) : BaseViewModel() {
 
@@ -35,16 +36,29 @@ internal class FinancesViewModel(
 
     init {
         observeOperations()
+        loadNextPage()
     }
 
     private fun observeOperations() {
         safeLaunch {
             val accountId = getCurrentUserUseCase()?.accountId
             requireNotNull(accountId)
+            state.update { it.copy(accountId = accountId) }
             subscribeToOperationsUseCase(accountId)
-                .catch { emit(emptyList()) }
                 .onEach { operations -> state.update { it.copy(operations = operations) } }
                 .launchIn(this)
+        }
+    }
+
+    fun loadNextPage() {
+        if (!state.value.hasNext) return
+        val page = state.value.page
+        safeLaunch {
+            val accountId = state.value.accountId
+            requireNotNull(accountId)
+            state.update { it.copy(isLoading = true) }
+            val pageOperations = getOperationsPageUseCase(accountId, page)
+            state.update { it.copy(page = page + 1, hasNext = pageOperations.hasNext, isLoading = false) }
         }
     }
 
@@ -53,12 +67,17 @@ internal class FinancesViewModel(
         UiState(
             operationsGrouped = operations.groupBy { it.date }.map { (date, operations) ->
                 UiState.OperationsGrouped(date.toString(dateFormat), operations.map { it.toUi() })
-            }
+            },
+            isLoading = isLoading,
         )
     }
 
     private data class State(
-        val operations: List<Operation> = emptyList()
+        val accountId: String? = null,
+        val operations: List<Operation> = emptyList(),
+        val page: Int = 0,
+        val hasNext: Boolean = true,
+        val isLoading: Boolean = false,
     )
 
     private fun Operation.toUi() = UiOperation(

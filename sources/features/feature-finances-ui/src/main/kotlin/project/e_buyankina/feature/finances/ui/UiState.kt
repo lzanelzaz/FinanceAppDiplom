@@ -3,7 +3,8 @@ package project.e_buyankina.feature.finances.ui
 import project.e_buyankina.feature.finances.common.Subtype
 
 internal data class UiState(
-    val operationsGrouped: List<OperationsGrouped> = emptyList()
+    val operationsGrouped: List<OperationsGrouped>,
+    val isLoading: Boolean,
 ) {
 
     data class OperationsGrouped(
