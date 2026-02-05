@@ -112,36 +112,9 @@ internal class CreateOrEditOperationViewModel(
             state.update { it.copy(isSaveLoading = true) }
             val state = state.value
             if (initState == null) {
-                val newOperation = NewOperation(
-                    type = when (state.selectedType) {
-                        Type.EXPENSE -> TransactionType.EXPENSE
-                        Type.INCOME -> TransactionType.INCOME
-                    },
-                    subtype = state.selectedSubtype.code,
-                    amount = state.amount.run { if (state.selectedType == Type.EXPENSE) this.negate() else this },
-                    date = state.selectedDate,
-                    description = state.details,
-                )
-                createOperationUseCase(
-                    accountId = state.accountId!!,
-                    newOperation = newOperation,
-                )
+                saveNewOperation()
             } else if (state != initState) {
-                val operation = Operation(
-                    operationId = state.operationId!!,
-                    type = when (state.selectedType) {
-                        Type.EXPENSE -> TransactionType.EXPENSE
-                        Type.INCOME -> TransactionType.INCOME
-                    },
-                    subtype = state.selectedSubtype.code,
-                    amount = state.amount.run { if (state.selectedType == Type.EXPENSE) this.negate() else this },
-                    date = state.selectedDate,
-                    description = state.details,
-                )
-                editOperationUseCase(
-                    accountId = state.accountId!!,
-                    operation = operation,
-                )
+                saveExistingOperation()
             }
             newsChannel.send(News.Close)
         }
@@ -159,6 +132,43 @@ internal class CreateOrEditOperationViewModel(
             }
             newsChannel.send(News.Close)
         }
+    }
+
+    private suspend fun saveNewOperation() {
+        val state = state.value
+        val newOperation = NewOperation(
+            type = when (state.selectedType) {
+                Type.EXPENSE -> TransactionType.EXPENSE
+                Type.INCOME -> TransactionType.INCOME
+            },
+            subtype = state.selectedSubtype.code,
+            amount = state.amount.run { if (state.selectedType == Type.EXPENSE) this.negate() else this },
+            date = state.selectedDate,
+            description = state.details,
+        )
+        createOperationUseCase(
+            accountId = state.accountId!!,
+            newOperation = newOperation,
+        )
+    }
+
+    private suspend fun saveExistingOperation() {
+        val state = state.value
+        val operation = Operation(
+            operationId = state.operationId!!,
+            type = when (state.selectedType) {
+                Type.EXPENSE -> TransactionType.EXPENSE
+                Type.INCOME -> TransactionType.INCOME
+            },
+            subtype = state.selectedSubtype.code,
+            amount = state.amount.run { if (state.selectedType == Type.EXPENSE) this.negate() else this },
+            date = state.selectedDate,
+            description = state.details,
+        )
+        editOperationUseCase(
+            accountId = state.accountId!!,
+            operation = operation,
+        )
     }
 
     private fun mapToUi(state: State): UiState = with(state) {
@@ -191,5 +201,17 @@ internal class CreateOrEditOperationViewModel(
         UiState.KeyBoardItem.Point(","),
         UiState.KeyBoardItem.Digit(0),
         UiState.KeyBoardItem.Backspace(R.drawable.backspace_24dp),
+    )
+
+    private data class State(
+        val accountId: String? = null,
+        val operationId: String? = null,
+        val selectedDate: DateTime = DateTime(System.currentTimeMillis()),
+        val amount: BigDecimal = BigDecimal.ONE,
+        val selectedType: Type = Type.EXPENSE,
+        val selectedSubtype: Subtype = Subtype.Expense.entries.first(),
+        val details: String? = null,
+        val isSaveLoading: Boolean = false,
+        val isDeleteLoading: Boolean = false,
     )
 }

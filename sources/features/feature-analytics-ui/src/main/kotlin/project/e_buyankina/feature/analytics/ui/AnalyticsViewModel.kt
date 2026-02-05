@@ -14,6 +14,7 @@ import project.e_buyankina.common.error.ErrorHandler
 import project.e_buyankina.common.error.safeLaunch
 import project.e_buyankina.feature.analytics.barchart.BarGroup
 import project.e_buyankina.feature.auth.api.domain.usecases.GetCurrentUserUseCase
+import project.e_buyankina.feature.operations.api.domain.Operation
 import project.e_buyankina.feature.operations.api.domain.TransactionType
 import project.e_buyankina.feature.operations.api.domain.usecases.GetOperationsPeriodUseCase
 import java.util.Locale
@@ -77,4 +78,11 @@ internal class AnalyticsViewModel(
                 },
         )
     }
+
+    private data class State(
+        val endDate: DateTime = DateTime(System.currentTimeMillis()),
+        val startDate: DateTime = endDate.minusMonths(3),
+        val operations: List<Operation> = emptyList(),
+        val selectedChartType: ChartType = ChartType.entries.first(),
+    )
 }
