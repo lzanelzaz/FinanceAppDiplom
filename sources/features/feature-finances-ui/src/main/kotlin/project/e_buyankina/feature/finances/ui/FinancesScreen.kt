@@ -123,12 +123,12 @@ internal fun FinancesOperations(
         LaunchedEffect(lazyListState) {
             snapshotFlow { lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
                 .collect { lastVisibleIndex ->
-                    if (lastVisibleIndex != null && lastVisibleIndex >= state.operationsGrouped.size - 3) {
+                    if (lastVisibleIndex != null && lastVisibleIndex >= state.totalOperationsCount - 3) {
                         onLoadNextPage()
                     }
                 }
         }
-        LazyColumn {
+        LazyColumn(state = lazyListState) {
             state.operationsGrouped.forEach { grouped ->
                 stickyHeader { Date(grouped.date) }
                 items(grouped.operations, { it.operationId }) {
@@ -244,7 +244,7 @@ private fun PreviewOperation() {
     AppTheme {
         FinancesOperations(
             Modifier,
-            UiState(listOf(initState), false),
+            UiState(listOf(initState), 0, false),
             {},
             {}
         )
@@ -269,7 +269,7 @@ private fun PreviewOperationsLoading() {
     AppTheme {
         FinancesContent(
             Modifier,
-            UiState(listOf(initState), true),
+            UiState(listOf(initState), 0, true),
             {}
         )
     }
