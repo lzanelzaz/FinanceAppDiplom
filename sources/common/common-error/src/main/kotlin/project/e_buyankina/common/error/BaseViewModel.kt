@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 abstract class BaseViewModel : ViewModel() {
@@ -12,7 +13,7 @@ abstract class BaseViewModel : ViewModel() {
 }
 
 fun BaseViewModel.safeLaunch(onError: () -> Unit = {}, block: suspend CoroutineScope.() -> Unit) {
-    viewModelScope.launch {
+    viewModelScope.launch(Dispatchers.Default) {
         try {
             block()
         } catch (e: CancellationException) {
